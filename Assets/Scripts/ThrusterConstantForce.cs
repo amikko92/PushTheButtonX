@@ -5,10 +5,7 @@ public class ThrusterConstantForce : Thruster
 {
     [SerializeField]
     private float m_thrustForce;
-
-    [SerializeField]
-    private float m_maxThrustForce;
-
+    
     public override Vector3 ThrustForce()
     {
         Vector3 velocity = m_rigidbody.velocity;
