@@ -32,14 +32,10 @@ public class DropPod : MonoBehaviour
         //m_accelerationFactor = 1.0f / m_accelerationTime;
 
         m_rayShooter = new RayShooter();
-        try
+        m_rayShooter.Shoot(transform.position, Vector3.down, m_groundMask.value);
+        if(m_rayShooter.Hit())
         {
-            float f = m_rayShooter.DistanceIntersection(transform.position, Vector3.down, m_groundMask.value);
-            Debug.Log(f);
-        }
-        catch(RayMissException ex)
-        {
-            Debug.Log(ex.ToString());
+            Debug.Log(m_rayShooter.IntersectionDistance());
         }
 	}
 	

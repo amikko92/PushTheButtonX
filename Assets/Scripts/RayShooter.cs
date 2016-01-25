@@ -1,35 +1,50 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-using System;
-
-public class RayMissException : Exception
-{
-    public override string ToString()
-    {
-        return "Ray did not hit anything";
-    }
-}
-
 public class RayShooter 
 {
+    private RaycastHit m_hitInfo;
+    private bool m_hit;
+
     public RayShooter()
     {
+        m_hit = false;
     }
 
-    public float DistanceIntersection(Vector3 origin, Vector3 direction, int mask)
+    public void Shoot(Vector3 origin, Vector3 direction)
     {
         Ray ray = new Ray(origin, direction);
-        RaycastHit hitInfo;
-        bool hit = Physics.Raycast(ray, out hitInfo, float.PositiveInfinity, mask);
-        
-        if(!hit)
-        {
-            throw new RayMissException();
-        }
+        m_hit = Physics.Raycast(ray, out m_hitInfo);
+    }
 
-        return hitInfo.distance;
+    public void Shoot(Vector3 origin, Vector3 direction, int mask)
+    {
+        Ray ray = new Ray(origin, direction);
+        m_hit = Physics.Raycast(ray, out m_hitInfo, float.PositiveInfinity, mask);
     }
     
+    public float IntersectionDistance()
+    {
+        return m_hitInfo.distance;
+    }
 
+    public Vector3 IntersectionPoint()
+    {
+        return m_hitInfo.point;
+    }
+
+    public Vector3 IntersectionNormal()
+    {
+        return m_hitInfo.normal;
+    }
+
+    public Transform IntersectedTransform()
+    {
+        return m_hitInfo.transform;
+    }
+
+    public bool Hit()
+    {
+        return m_hit;
+    }
 }
