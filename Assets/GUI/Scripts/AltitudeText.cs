@@ -12,12 +12,12 @@ public class AltitudeText : MonoBehaviour {
     private float offset = 0.5f;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         txt = GetComponent<Text>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        txt.text = Convert.ToString(target.position.y - offset);
+        txt.text = "Altitude\n" + Convert.ToString(Math.Round(target.position.y - offset)) + " m";
     }
 }

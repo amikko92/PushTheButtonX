@@ -16,6 +16,6 @@ public class VelocityText : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        txt.text = Convert.ToString(target.velocity.y);
+        txt.text = "Altitude\n" + Convert.ToString(Math.Abs(Math.Round(target.velocity.y, 2))) + "\nm/s";
 	}
 }
