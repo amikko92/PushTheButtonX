@@ -17,6 +17,7 @@ public class DropPod : MonoBehaviour
 	{
         m_rigidbody2D = GetComponent<Rigidbody2D>();
         m_thruster = GetComponent<Thruster>();
+        m_rayShooter2D = new RayShooter2D();
 	}
 	
 	private void FixedUpdate()
