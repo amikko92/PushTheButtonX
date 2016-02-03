@@ -1,26 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RayShooter 
+public class RayShooter2D 
 {
-    private RaycastHit m_hitInfo;
+    private RaycastHit2D m_hitInfo;
     private bool m_hit;
+    public bool Hit
+    {
+        get { return m_hit; }
+    }
 
-    public RayShooter()
+    public RayShooter2D()
     {
         m_hit = false;
     }
 
-    public void Shoot(Vector3 origin, Vector3 direction)
+    public void Shoot(Vector2 origin, Vector2 direction)
     {
-        Ray ray = new Ray(origin, direction);
-        m_hit = Physics.Raycast(ray, out m_hitInfo);
+        m_hit = Physics2D.Raycast(origin, direction);
     }
 
-    public void Shoot(Vector3 origin, Vector3 direction, int mask)
+    public void Shoot(Vector2 origin, Vector2 direction, int mask)
     {
-        Ray ray = new Ray(origin, direction);
-        m_hit = Physics.Raycast(ray, out m_hitInfo, float.PositiveInfinity, mask);
+        m_hit = Physics2D.Raycast(origin, direction, float.PositiveInfinity, mask);
     }
     
     public float IntersectionDistance()
@@ -41,10 +43,5 @@ public class RayShooter
     public Transform IntersectedTransform()
     {
         return m_hitInfo.transform;
-    }
-
-    public bool Hit()
-    {
-        return m_hit;
     }
 }

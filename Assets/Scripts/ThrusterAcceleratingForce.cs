@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class ThrusterAcceleratingForce : Thruster 
 {
-    [SerializeField]
+    /*[SerializeField]
     private float m_maxThrustForce;
 
     [SerializeField]
@@ -34,5 +35,9 @@ public class ThrusterAcceleratingForce : Thruster
         }
 
         return deltaForce;
+    }*/
+    public override Vector2 ThrustForce()
+    {
+        throw new NotImplementedException();
     }
 }
