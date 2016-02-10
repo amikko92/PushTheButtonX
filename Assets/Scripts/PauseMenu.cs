@@ -1,19 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class PauseMenu : MonoBehaviour {
 
     public static bool paused;
     bool showControls;
     public GUISkin mySkin;
+    Canvas canvas;
     void Awake () {
         paused = false;
-	}
+        canvas = GetComponent<Canvas>();
+        canvas.enabled = false;
+    }
 	
-	void Update () {
+	void Update ()
+    {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             paused = !paused;
+            canvas.enabled = !canvas.enabled;
             if (paused)
                 Time.timeScale = 0;
             else
@@ -22,41 +31,13 @@ public class PauseMenu : MonoBehaviour {
             }
         }
     }
-    void OnGUI()
+    public void Quit()
     {
-        if (paused)
-        {
-            GUI.skin = mySkin;
-            GUIStyle st = GUI.skin.GetStyle("Label");
-            st.fontSize = 100;
-            st.fontStyle = FontStyle.Bold;
-
-            GUIStyle st2 = GUI.skin.GetStyle("Label");
-            st2.fontSize = 40;
-            st2.fontStyle = FontStyle.Bold;
-
-
-            st.alignment = TextAnchor.UpperCenter;
-            st2.alignment = TextAnchor.UpperCenter;
-
-            GUI.Label(new Rect(Screen.width / 2 - 250, Screen.height / 2 - 250, 500, 150), "Game is paused", st);
-            GUI.Label(new Rect(Screen.width / 2 - 450, Screen.height / 2 - 200, 900, 150), "Press ESC to continue", st2);
-
-            if (GUI.Button(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 100, 200, 100), "Main Menu"))
-            {
-                //GameObject fade = new GameObject();
-                //Fade fout = fade.AddComponent<Fade>();
-                //fout.texture.color = Color.black;
-                //Application.LoadLevel("MainMenu");
-                paused = false;
-                Time.timeScale = 1;
-            }
-            Application.Quit();
-            if (GUI.Button(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 50, 200, 100), "Exit Game"))
+        #if UNITY_EDITOR
+                EditorApplication.isPlaying = false;
+        #else
                 Application.Quit();
-
-
-        }
+        #endif
     }
 }
 
