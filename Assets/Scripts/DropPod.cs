@@ -43,7 +43,7 @@ public class DropPod : MonoBehaviour
 
         if(Input.GetKey(KeyCode.Space))
         {
-            m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+            FireThruster();
         }
     }
 
@@ -161,5 +161,10 @@ public class DropPod : MonoBehaviour
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
         float gravityScale =  m_gravityScaleOffset + (1.0f - (altitude / m_startAltitude));
         return gravityScale;
+    }
+
+    private void FireThruster()
+    {
+        m_rigidbody2D.AddForce(m_thruster.ThrustForce());
     }
 }
