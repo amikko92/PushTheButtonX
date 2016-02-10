@@ -3,6 +3,9 @@ using System.Collections;
 
 public class AsteroidBehaviour : MonoBehaviour {
 
+    [SerializeField]
+    private Vector3 translationFactor = new Vector3(1.0f, 0, 0);
+
     private Vector3 startPos;
 
     void OnEnable()
@@ -22,12 +25,12 @@ public class AsteroidBehaviour : MonoBehaviour {
         {
             if (startPos.x <= 0)
             {
-                transform.Translate(0.1f, 0, 0);
+                transform.Translate(translationFactor * Time.deltaTime);
             }
 
             else
             {
-                transform.Translate(-0.1f, 0, 0);
+                transform.Translate(-translationFactor * Time.deltaTime);
             }
         }
          
