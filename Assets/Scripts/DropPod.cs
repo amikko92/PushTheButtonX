@@ -13,6 +13,11 @@ public class DropPod : MonoBehaviour
 
     private bool m_shield = false;
 
+    [SerializeField, Range(0.0f, 1.0f)]
+    private float m_gravityScaleOffset = 0.5f;
+
+    private float m_startAltitude;
+
     private Transform m_transform;
     private Rigidbody2D m_rigidbody2D;
     private BoxCollider2D m_boxCollider2D;
@@ -28,10 +33,14 @@ public class DropPod : MonoBehaviour
         m_rigidbody2D = GetComponent<Rigidbody2D>();
         m_thruster = GetComponent<Thruster>();
         m_boxCollider2D = GetComponent<BoxCollider2D>();
+
+        m_startAltitude = Altitude();
 	}
 	
 	private void FixedUpdate()
 	{
+        m_rigidbody2D.gravityScale = GravityScale();
+
         if(Input.GetKey(KeyCode.Space))
         {
             m_rigidbody2D.AddForce(m_thruster.ThrustForce());
@@ -145,5 +154,12 @@ public class DropPod : MonoBehaviour
         Vector3 bottomCenter = transform.position;
         bottomCenter.y += m_boxCollider2D.size.y * 0.5f;
         return bottomCenter;
+    }
+
+    private float GravityScale()
+    {
+        float altitude = Mathf.Min(Altitude(), m_startAltitude);
+        float gravityScale =  m_gravityScaleOffset + (1.0f - (altitude / m_startAltitude));
+        return gravityScale;
     }
 }
