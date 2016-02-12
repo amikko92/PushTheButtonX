@@ -17,7 +17,7 @@ public class CameraMovement : MonoBehaviour
     {
         pod = GameObject.FindGameObjectWithTag("Player");
         startOfGame = true;
-        transform.position = new Vector3(0.0f, 4.4f, -8.9f);
+        //transform.position = new Vector3(0.0f, 4.4f, -8.9f);
         startPos = pod.transform.position;
         init = transform.position.y;
         //fast = set maxSpeed;
