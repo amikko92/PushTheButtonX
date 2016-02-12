@@ -27,6 +27,9 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private LayerMask m_groundMask;
 
+    // E-man: Get ThrusterFlame object on awake
+    private GameObject thrusterFlame;
+
 	private void Awake() 
 	{
         m_transform = transform;
@@ -35,16 +38,37 @@ public class DropPod : MonoBehaviour
         m_boxCollider2D = GetComponent<BoxCollider2D>();
 
         m_startAltitude = Altitude();
+
+        // E-man - Begin
+        thrusterFlame = GameObject.Find("ThrusterFlame");
+
+        if (thrusterFlame)
+        {
+            thrusterFlame.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
+        }
+        // E-man - End
+
+        
 	}
 	
 	private void FixedUpdate()
 	{
         m_rigidbody2D.gravityScale = GravityScale();
 
-        if(Input.GetKey(KeyCode.Space))
+        // E-man: Changed this to crappy temporal fix while we wait for input manager
+        bool spaceKey = Input.GetKey(KeyCode.Space);
+
+        if (spaceKey)
         {
             FireThruster();
         }
+
+        thrusterFlame.SetActive(spaceKey);
+        
     }
 
     public float Altitude()
@@ -165,6 +189,6 @@ public class DropPod : MonoBehaviour
 
     private void FireThruster()
     {
-        m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+        m_rigidbody2D.AddForce(m_thruster.ThrustForce());       
     }
 }
