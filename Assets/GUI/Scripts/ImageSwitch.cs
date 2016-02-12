@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ImageSwitch : MonoBehaviour {
 
-    public Rigidbody target;
+    public Rigidbody2D target;
     public Texture active;
     public Texture inactive;
     

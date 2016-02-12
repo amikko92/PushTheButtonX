@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class FuelGauge : MonoBehaviour {
 
-    public Rigidbody target;
+    public Rigidbody2D target;
 
     private RectTransform img;
 

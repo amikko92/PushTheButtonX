@@ -33,4 +33,8 @@ public class DropPod : MonoBehaviour
             m_rigidbody2D.AddForce(m_thruster.ThrustForce());
         }
     }
+    
+    void OnCollisionEnter2D (Collision2D coll)
+    {
+    }
 }

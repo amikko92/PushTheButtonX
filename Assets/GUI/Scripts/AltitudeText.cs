@@ -5,7 +5,7 @@ using System;
 
 public class AltitudeText : MonoBehaviour {
 
-    public Rigidbody target;
+    public Rigidbody2D target;
 
     private Text txt;
     // "Hack" to make sure that altitude is 0 when on the ground, should be easy to make it work relative to the pod

@@ -5,7 +5,7 @@ using System;
 
 public class VelocityText : MonoBehaviour {
 
-    public Rigidbody target;
+    public Rigidbody2D target;
 
     private Text txt;
 
