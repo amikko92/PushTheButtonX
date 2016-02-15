@@ -26,8 +26,14 @@ public class DropPod : MonoBehaviour
 
     [SerializeField]
     private LayerMask m_groundMask;
-
-
+    
+    // Raycast members
+    [SerializeField]
+    private int m_totalVerticalRays = 5;
+    private float m_verticalRayInterval;
+    private float m_rayDistance = 0.5f;
+    private float m_skinWidth = 0.1f;
+    private Vector2 m_bottomLeft;
 
     // E-man: Get ThrusterFlame object on awake
     private GameObject thrusterFlame;
@@ -56,9 +62,13 @@ public class DropPod : MonoBehaviour
         }
         // E-man - End
 
-        
-	}
-	
+        // Set up raycast collision check
+        Vector2 size = m_boxCollider2D.size;
+        Vector3 scale = transform.localScale;
+        float width = size.x * Mathf.Abs(scale.x) - (2.0f * m_skinWidth);
+        m_verticalRayInterval = width / (m_totalVerticalRays - 1);
+    }
+
 	private void FixedUpdate()
 	{
         m_rigidbody2D.gravityScale = GravityScale();
@@ -130,23 +140,81 @@ public class DropPod : MonoBehaviour
         }
     }
 
-    private bool LandingSequence(Collision2D collision)
-    {
-        // TODO: Calculate direction of collision. Ray casting?
-
-        return LandVelocityCheck();
-    }
-
     private bool LandVelocityCheck()
     {
-        // Compare Current velocity against maximum allowed landing velocity
-        return (m_maxLandingVelocity * m_maxLandingVelocity) > m_rigidbody2D.velocity.sqrMagnitude; ;
+        // If current vertical velocity is within the allowed landing velocity
+        return (m_maxLandingVelocity > Mathf.Abs(m_rigidbody2D.velocity.y));
     }
 
+    private void CalculateRayOrigin()
+    {
+        // Box values
+        Vector2 position = (Vector2)transform.position;
+        Vector2 scale = (Vector2)transform.localScale;
+        Vector2 size = m_boxCollider2D.size;
+        Vector2 offset = m_boxCollider2D.offset;
+        Vector2 center = position + new Vector2(offset.x * scale.x, offset.y * scale.y);
+
+        float halfWidth = size.x * 0.5f;
+        float halfHeight = size.y * 0.5f;
+
+        m_bottomLeft = center + Vector2.down * (halfHeight - m_skinWidth) + Vector2.left * (halfWidth - m_skinWidth);
+    }
+
+    private bool LandingSequence(Collision2D collision)
+    {
+        bool land = LandVelocityCheck();
+
+        // If it is a platform, check if we hit from above
+        string objLayerName = LayerMask.LayerToName(collision.gameObject.layer);
+        if (land && string.Equals(objLayerName, "Platform"))
+        {
+            CalculateRayOrigin();
+            land = LandFromAbove(collision.transform);
+        }
+
+        return land;
+    }
+
+    private bool LandFromAbove(Transform landTarget)
+    {
+        // Ray origin
+        Vector2 rayOrigin = m_bottomLeft;
+
+        // Ray Direction
+        Vector2 rayDirection = Vector2.down;
+
+        // Length of ray
+        float rayDistance = m_rayDistance + m_skinWidth;
+
+        Vector2 shootFrom = rayOrigin;
+        bool fromAbove = false;
+        for (int i = 0; i < m_totalVerticalRays; i++)
+        {
+            // Point to shoot this ray from
+            shootFrom.x = rayOrigin.x + m_verticalRayInterval * i;
+            shootFrom.y = rayOrigin.y;
+
+            m_rayShooter2D.Shoot(shootFrom, rayDirection, m_groundMask, rayDistance);
+            //Debug.DrawRay(shootFrom, rayDirection * rayDistance, Color.red);
+
+            if (!m_rayShooter2D.Hit)
+            {
+                // No hit, continue to next ray
+                continue;
+            }
+            else if (landTarget == m_rayShooter2D.IntersectedTransform())
+            {
+                // Landing from above. Stop searching
+                fromAbove = true;
+                break;
+            }
+        }
+        return fromAbove;
+    }
+    
     private void KillMe()
     {
-        Debug.Log("BOOM!");
-
         gameObject.SetActive(false);
 
         // TODO: Explosions and game over event
@@ -179,16 +247,7 @@ public class DropPod : MonoBehaviour
 
         // TODO: Shield activation effects here
     }
-
-    public Vector3 BottomLeft()
-    {
-        Vector3 bottomLeft = transform.position;
-        bottomLeft.x -= m_boxCollider2D.size.x * 0.5f;
-        bottomLeft.y += m_boxCollider2D.size.y * 0.5f;
-        
-        return bottomLeft;
-    }
-
+    
     private float GravityScale()
     {
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
