@@ -11,14 +11,16 @@ public class DropHatch : MonoBehaviour
 
     [SerializeField]
     private ParticleSystem m_motherShipExplosion;
+    ParticleSystem.EmissionModule em;
 
     private Collider2D m_collider2D;
 
 	private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
+        em = m_motherShipExplosion.emission;
 
-        m_motherShipExplosion.enableEmission = false;
+        em.enabled = false;
         
     }
 	
@@ -46,7 +48,7 @@ public class DropHatch : MonoBehaviour
     private void DestroyMotherShip()
     {
         m_motherShipExplosion.time = 0.0f;
-        m_motherShipExplosion.enableEmission = true;
+        em.enabled = true;
         m_motherShipExplosion.loop = false;
         
         transform.root.gameObject.SetActive(false);
