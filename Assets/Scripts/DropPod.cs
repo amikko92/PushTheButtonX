@@ -30,9 +30,6 @@ public class DropPod : MonoBehaviour
     // E-man: Get ThrusterFlame object on awake
     private GameObject thrusterFlame;
 
-    // E-man: Audio source components
-    private AudioSource[] audioSource;
-
 	private void Awake() 
 	{
         m_transform = transform;
@@ -51,11 +48,11 @@ public class DropPod : MonoBehaviour
         }
         else
         {
-            Debug.Log("DopPod::Awake(), Hey buddy! Can't find ThrusterFlame guy!");
+            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
         }
         // E-man - End
 
-        audioSource = GetComponents<AudioSource>();        
+        
 	}
 	
 	private void FixedUpdate()
@@ -68,24 +65,10 @@ public class DropPod : MonoBehaviour
         if (spaceKey)
         {
             FireThruster();
-
-            // E-man: Play thruster sound if stopped
-            if (!audioSource[0].isPlaying && !audioSource[1].isPlaying)
-            {
-                audioSource[0].Play();
-                audioSource[1].Play();
-            }
-        }
-        else
-        {
-            if(audioSource[0].isPlaying && audioSource[1].isPlaying)
-            {
-                audioSource[0].Stop();
-                audioSource[1].Stop();
-            }
         }
 
-        thrusterFlame.SetActive(spaceKey);        
+        thrusterFlame.SetActive(spaceKey);
+        
     }
 
     public float Altitude()
@@ -206,6 +189,6 @@ public class DropPod : MonoBehaviour
 
     private void FireThruster()
     {
-        m_rigidbody2D.AddForce(m_thruster.ThrustForce());        
+        m_rigidbody2D.AddForce(m_thruster.ThrustForce());       
     }
 }
