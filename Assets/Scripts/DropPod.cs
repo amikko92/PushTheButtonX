@@ -27,15 +27,19 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private LayerMask m_groundMask;
 
+
+
     // E-man: Get ThrusterFlame object on awake
     private GameObject thrusterFlame;
-
+    
 	private void Awake() 
 	{
         m_transform = transform;
         m_rigidbody2D = GetComponent<Rigidbody2D>();
         m_thruster = GetComponent<Thruster>();
         m_boxCollider2D = GetComponent<BoxCollider2D>();
+
+        m_rayShooter2D = new RayShooter2D();
 
         m_startAltitude = Altitude();
 
@@ -142,6 +146,9 @@ public class DropPod : MonoBehaviour
     private void KillMe()
     {
         Debug.Log("BOOM!");
+
+        gameObject.SetActive(false);
+
         // TODO: Explosions and game over event
     }
 
@@ -173,11 +180,13 @@ public class DropPod : MonoBehaviour
         // TODO: Shield activation effects here
     }
 
-    public Vector3 PodBottomCenter()
+    public Vector3 BottomLeft()
     {
-        Vector3 bottomCenter = transform.position;
-        bottomCenter.y += m_boxCollider2D.size.y * 0.5f;
-        return bottomCenter;
+        Vector3 bottomLeft = transform.position;
+        bottomLeft.x -= m_boxCollider2D.size.x * 0.5f;
+        bottomLeft.y += m_boxCollider2D.size.y * 0.5f;
+        
+        return bottomLeft;
     }
 
     private float GravityScale()
