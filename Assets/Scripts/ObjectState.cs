@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class ObjectState : MonoBehaviour {
+public delegate void UpdateHandler();
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public interface ObjectState 
+{
+    Dictionary<string, UpdateHandler> getHandler(gameState state);  // Getter for updateHandler based on current gameState
+    void ChangeState(gameState state);                              // Change the current game state of this object
 }
