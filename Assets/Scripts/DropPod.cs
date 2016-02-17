@@ -272,9 +272,11 @@ public class DropPod : MonoBehaviour
 
     private void FireThruster(bool spaceKey)
     {
-        if (spaceKey)
+        if (spaceKey && m_fuel > 0.0f)
         {
             m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+
+            m_fuel -= m_fuelUsePerSecond * Time.deltaTime;
 
             // Enable flame
             thrusterFlame.SetActive(true);
