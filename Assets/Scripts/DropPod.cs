@@ -9,12 +9,20 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
-    private int m_fuel = 100;
+    [SerializeField, Range(0.0f, 100.0f)]
+    private float m_fuel = 100.0f;
 
-    private bool m_shield = false;
+    [SerializeField, Range(0.0f, 100.0f)]
+    private float m_fuelUsePerSecond = 1.0f;
+
+    [Space(10)]
 
     [SerializeField, Range(0.0f, 1.0f)]
     private float m_gravityScaleOffset = 0.5f;
+
+    private bool m_shield = false;
+
+    
 
     private float m_startAltitude;
 
@@ -92,7 +100,7 @@ public class DropPod : MonoBehaviour
         return m_rigidbody2D.velocity.magnitude;
     }
 
-    public int Fuel()
+    public float Fuel()
     {
         return m_fuel;
     }
