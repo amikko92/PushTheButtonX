@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ObstacleManager : MonoBehaviour {
+public class SpawnManager : MonoBehaviour {
 
     //public PlayerAlive playerAlive;
 
@@ -9,15 +9,12 @@ public class ObstacleManager : MonoBehaviour {
     private GameObjectPool[] objectPools;
 
     [SerializeField]
-    private float spawnFrequency = 1.0f;
-
-    [SerializeField]
     private GameObject pod;
 
     [SerializeField]
     private GameObject[] spawnPoints;
 
-    private GameObjectPool AsteroidPool;
+    private GameObjectPool SpawnPool;
 
     // Use this for initialization
     void Start ()
@@ -35,10 +32,10 @@ public class ObstacleManager : MonoBehaviour {
                     {
                         if (gop.CompareTag("AsteroidPool"))
                         {
-                            AsteroidPool = gop; 
+                            SpawnPool = gop; 
                         }
                     }
-                    GameObject asteroid = AsteroidPool.GetPooledObject();
+                    GameObject asteroid = SpawnPool.GetPooledObject();
                     if (asteroid != null)
                     {
                         return asteroid;

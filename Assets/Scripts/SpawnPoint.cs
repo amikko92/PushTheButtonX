@@ -6,16 +6,13 @@ public enum SpawnableType { Asteroid };
 public class SpawnPoint : MonoBehaviour {
 
     [SerializeField]
-    private ObstacleManager spawnManager;
-
-    [SerializeField]
-    private bool several;
+    private SpawnManager spawnManager;
 
     [SerializeField]
     private int nbrToSpawn;
 
     [SerializeField]
-    private int spawnFrequency;
+    private float spawnDelayOffset;
 
     [SerializeField]
     private float spawnDelay;
@@ -25,39 +22,37 @@ public class SpawnPoint : MonoBehaviour {
 
     private float time = 0;
 
-	
-	// Update is called once per frame
-	void Update () {
-	
+    private GameObject spawn;
+
+    private bool triggered;
+
+    private int nbrSpawned;
+
+
+    public void ActivateSpawn()
+    {
+        triggered = true;
+        time = Time.time;
+    }
+
+    // Update is called once per frame
+    void Update () {
+        if (triggered && Time.time - time > spawnDelay && nbrSpawned < nbrToSpawn)
+        {
+            PointSpawn();
+            nbrSpawned++;
+        }
 	}
 
     public void PointSpawn()
     {
-        time = Time.deltaTime;
 
-        if (several)
+        GameObject spawn = spawnManager.ManagerSpawn(spawnType);
+        if (spawn != null)
         {
-            SpawnSeveral(nbrToSpawn);
-        }
-
-        else
-        {
-            GameObject spawn = spawnManager.ManagerSpawn(spawnType);
-
             spawn.transform.position = transform.position;
             spawn.SetActive(true);
-        }        
-    }
-
-    void SpawnSeveral(int nbrToSpawn)
-    {
-        for (int i = 0; i < nbrToSpawn; i++)
-        {
-            GameObject spawn = spawnManager.ManagerSpawn(spawnType);
-
-            spawn.transform.position = transform.position;
-            spawn.SetActive(true);
-        }
-
+            time = Time.time + Random.Range(-spawnDelayOffset, spawnDelayOffset);
+        }       
     }
 }
