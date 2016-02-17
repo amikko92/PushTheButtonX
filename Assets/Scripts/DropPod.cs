@@ -77,27 +77,10 @@ public class DropPod : MonoBehaviour
 	{
         m_rigidbody2D.gravityScale = GravityScale();
 
-        // E-man: Changed this to crappy temporal fix while we wait for input manager
-        bool spaceKey = Input.GetKey(KeyCode.Space);
-
-        if (spaceKey)
-        {
-            FireThruster();
-
-            if(!audioSources[0].isPlaying && !audioSources[1].isPlaying)
-            {
-                audioSources[0].Play();
-                audioSources[1].Play();
-            }
-        } else if (audioSources[0].isPlaying && audioSources[1].isPlaying)
-        {
-            audioSources[0].Stop();
-            audioSources[1].Stop();
-        }
-
-        thrusterFlame.SetActive(spaceKey);
-        
+        // E-man: haha! Take that Andreas!
+        FireThruster(Input.GetKey(KeyCode.Space));
     }
+
 
     public float Altitude()
     {
@@ -279,8 +262,35 @@ public class DropPod : MonoBehaviour
         return gravityScale;
     }
 
-    private void FireThruster()
+    private void FireThruster(bool spaceKey)
     {
-        m_rigidbody2D.AddForce(m_thruster.ThrustForce());       
+        if (spaceKey)
+        {
+            m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+
+            // Enable flame
+            thrusterFlame.SetActive(true);
+
+            if (!audioSources[0].isPlaying && !audioSources[1].isPlaying /*&& !audioSources[2].isPlaying*/)
+            {
+                audioSources[0].Play();
+                audioSources[1].Play();
+                audioSources[2].Play();
+            }
+        }
+        else
+        {
+            // Disable flame
+            thrusterFlame.SetActive(false);
+
+            if (audioSources[0].isPlaying || audioSources[1].isPlaying)
+            {
+                audioSources[3].time = 0.2f;
+                audioSources[3].Play();
+                audioSources[0].Stop();
+                audioSources[1].Stop();
+                audioSources[2].Stop();
+            }
+        }       
     }
 }
