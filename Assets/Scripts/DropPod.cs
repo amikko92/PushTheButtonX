@@ -26,7 +26,20 @@ public class DropPod : MonoBehaviour
 
     [SerializeField]
     private LayerMask m_groundMask;
+    
+    // Raycast members
+    [SerializeField]
+    private int m_totalVerticalRays = 5;
+    private float m_verticalRayInterval;
+    private float m_rayDistance = 0.5f;
+    private float m_skinWidth = 0.1f;
+    private Vector2 m_bottomLeft;
 
+    // E-man: Get ThrusterFlame object on awake
+    private GameObject thrusterFlame;
+
+    private AudioSource[] audioSources;
+    
 	private void Awake() 
 	{
         m_transform = transform;
@@ -34,17 +47,56 @@ public class DropPod : MonoBehaviour
         m_thruster = GetComponent<Thruster>();
         m_boxCollider2D = GetComponent<BoxCollider2D>();
 
+        m_rayShooter2D = new RayShooter2D();
+
         m_startAltitude = Altitude();
-	}
-	
+
+        // E-man - Begin
+        thrusterFlame = GameObject.Find("ThrusterFlame");
+
+        if (thrusterFlame)
+        {
+            thrusterFlame.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
+        }
+        // E-man - End
+
+        // Set up raycast collision check
+        Vector2 size = m_boxCollider2D.size;
+        Vector3 scale = transform.localScale;
+        float width = size.x * Mathf.Abs(scale.x) - (2.0f * m_skinWidth);
+        m_verticalRayInterval = width / (m_totalVerticalRays - 1);
+
+        audioSources = GetComponents<AudioSource>();
+    }
+
 	private void FixedUpdate()
 	{
         m_rigidbody2D.gravityScale = GravityScale();
 
-        if(Input.GetKey(KeyCode.Space))
+        // E-man: Changed this to crappy temporal fix while we wait for input manager
+        bool spaceKey = Input.GetKey(KeyCode.Space);
+
+        if (spaceKey)
         {
             FireThruster();
+
+            if(!audioSources[0].isPlaying && !audioSources[1].isPlaying)
+            {
+                audioSources[0].Play();
+                audioSources[1].Play();
+            }
+        } else if (audioSources[0].isPlaying && audioSources[1].isPlaying)
+        {
+            audioSources[0].Stop();
+            audioSources[1].Stop();
         }
+
+        thrusterFlame.SetActive(spaceKey);
+        
     }
 
     public float Altitude()
@@ -100,24 +152,95 @@ public class DropPod : MonoBehaviour
                 KillMe();
             }
         }
-    }
 
-    private bool LandingSequence(Collision2D collision)
-    {
-        // TODO: Calculate direction of collision. Ray casting?
-
-        return LandVelocityCheck();
+        if(string.Equals(layerName, "Obstacle"))
+        {
+            Debug.Log("Cloud explosion");
+            if (m_rigidbody2D.velocity.y > 0)
+            {
+                KillMe();
+                Debug.Log("Cloud explosion 4 real");
+            }
+        }
     }
 
     private bool LandVelocityCheck()
     {
-        // Compare Current velocity against maximum allowed landing velocity
-        return (m_maxLandingVelocity * m_maxLandingVelocity) > m_rigidbody2D.velocity.sqrMagnitude; ;
+        // If current vertical velocity is within the allowed landing velocity
+        return (m_maxLandingVelocity > Mathf.Abs(m_rigidbody2D.velocity.y));
     }
 
+    private void CalculateRayOrigin()
+    {
+        // Box values
+        Vector2 position = (Vector2)transform.position;
+        Vector2 scale = (Vector2)transform.localScale;
+        Vector2 size = m_boxCollider2D.size;
+        Vector2 offset = m_boxCollider2D.offset;
+        Vector2 center = position + new Vector2(offset.x * scale.x, offset.y * scale.y);
+
+        float halfWidth = size.x * 0.5f;
+        float halfHeight = size.y * 0.5f;
+
+        m_bottomLeft = center + Vector2.down * (halfHeight - m_skinWidth) + Vector2.left * (halfWidth - m_skinWidth);
+    }
+
+    private bool LandingSequence(Collision2D collision)
+    {
+        bool land = LandVelocityCheck();
+
+        // If it is a platform, check if we hit from above
+        string objLayerName = LayerMask.LayerToName(collision.gameObject.layer);
+        if (land && string.Equals(objLayerName, "Platform"))
+        {
+            CalculateRayOrigin();
+            land = LandFromAbove(collision.transform);
+        }
+
+        return land;
+    }
+
+    private bool LandFromAbove(Transform landTarget)
+    {
+        // Ray origin
+        Vector2 rayOrigin = m_bottomLeft;
+
+        // Ray Direction
+        Vector2 rayDirection = Vector2.down;
+
+        // Length of ray
+        float rayDistance = m_rayDistance + m_skinWidth;
+
+        Vector2 shootFrom = rayOrigin;
+        bool fromAbove = false;
+        for (int i = 0; i < m_totalVerticalRays; i++)
+        {
+            // Point to shoot this ray from
+            shootFrom.x = rayOrigin.x + m_verticalRayInterval * i;
+            shootFrom.y = rayOrigin.y;
+
+            m_rayShooter2D.Shoot(shootFrom, rayDirection, m_groundMask, rayDistance);
+            //Debug.DrawRay(shootFrom, rayDirection * rayDistance, Color.red);
+
+            if (!m_rayShooter2D.Hit)
+            {
+                // No hit, continue to next ray
+                continue;
+            }
+            else if (landTarget == m_rayShooter2D.IntersectedTransform())
+            {
+                // Landing from above. Stop searching
+                fromAbove = true;
+                break;
+            }
+        }
+        return fromAbove;
+    }
+    
     private void KillMe()
     {
-        Debug.Log("BOOM!");
+        gameObject.SetActive(false);
+
         // TODO: Explosions and game over event
     }
 
@@ -148,14 +271,7 @@ public class DropPod : MonoBehaviour
 
         // TODO: Shield activation effects here
     }
-
-    public Vector3 PodBottomCenter()
-    {
-        Vector3 bottomCenter = transform.position;
-        bottomCenter.y += m_boxCollider2D.size.y * 0.5f;
-        return bottomCenter;
-    }
-
+    
     private float GravityScale()
     {
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
@@ -165,6 +281,6 @@ public class DropPod : MonoBehaviour
 
     private void FireThruster()
     {
-        m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+        m_rigidbody2D.AddForce(m_thruster.ThrustForce());       
     }
 }
