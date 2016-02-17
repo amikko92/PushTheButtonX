@@ -9,12 +9,20 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
-    private int m_fuel = 100;
+    [SerializeField, Range(0.0f, 100.0f)]
+    private float m_fuel = 100.0f;
 
-    private bool m_shield = false;
+    [SerializeField, Range(0.0f, 100.0f)]
+    private float m_fuelUsePerSecond = 1.0f;
+
+    [Space(10)]
 
     [SerializeField, Range(0.0f, 1.0f)]
     private float m_gravityScaleOffset = 0.5f;
+
+    private bool m_shield = false;
+
+    
 
     private float m_startAltitude;
 
@@ -77,27 +85,10 @@ public class DropPod : MonoBehaviour
 	{
         m_rigidbody2D.gravityScale = GravityScale();
 
-        // E-man: Changed this to crappy temporal fix while we wait for input manager
-        bool spaceKey = Input.GetKey(KeyCode.Space);
-
-        if (spaceKey)
-        {
-            FireThruster();
-
-            if(!audioSources[0].isPlaying && !audioSources[1].isPlaying)
-            {
-                audioSources[0].Play();
-                audioSources[1].Play();
-            }
-        } else if (audioSources[0].isPlaying && audioSources[1].isPlaying)
-        {
-            audioSources[0].Stop();
-            audioSources[1].Stop();
-        }
-
-        thrusterFlame.SetActive(spaceKey);
-        
+        // E-man: haha! Take that Andreas!
+        FireThruster(Input.GetKey(KeyCode.Space));
     }
+
 
     public float Altitude()
     {
@@ -109,7 +100,7 @@ public class DropPod : MonoBehaviour
         return m_rigidbody2D.velocity.magnitude;
     }
 
-    public int Fuel()
+    public float Fuel()
     {
         return m_fuel;
     }
@@ -279,8 +270,37 @@ public class DropPod : MonoBehaviour
         return gravityScale;
     }
 
-    private void FireThruster()
+    private void FireThruster(bool spaceKey)
     {
-        m_rigidbody2D.AddForce(m_thruster.ThrustForce());       
+        if (spaceKey && m_fuel > 0.0f)
+        {
+            m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+
+            m_fuel -= m_fuelUsePerSecond * Time.deltaTime;
+
+            // Enable flame
+            thrusterFlame.SetActive(true);
+
+            if (!audioSources[0].isPlaying && !audioSources[1].isPlaying /*&& !audioSources[2].isPlaying*/)
+            {
+                audioSources[0].Play();
+                audioSources[1].Play();
+                audioSources[2].Play();
+            }
+        }
+        else
+        {
+            // Disable flame
+            thrusterFlame.SetActive(false);
+
+            if (audioSources[0].isPlaying || audioSources[1].isPlaying)
+            {
+                audioSources[3].time = 0.2f;
+                audioSources[3].Play();
+                audioSources[0].Stop();
+                audioSources[1].Stop();
+                audioSources[2].Stop();
+            }
+        }       
     }
 }
