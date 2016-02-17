@@ -37,6 +37,8 @@ public class DropPod : MonoBehaviour
 
     // E-man: Get ThrusterFlame object on awake
     private GameObject thrusterFlame;
+
+    private AudioSource[] audioSources;
     
 	private void Awake() 
 	{
@@ -67,6 +69,8 @@ public class DropPod : MonoBehaviour
         Vector3 scale = transform.localScale;
         float width = size.x * Mathf.Abs(scale.x) - (2.0f * m_skinWidth);
         m_verticalRayInterval = width / (m_totalVerticalRays - 1);
+
+        audioSources = GetComponents<AudioSource>();
     }
 
 	private void FixedUpdate()
@@ -79,6 +83,16 @@ public class DropPod : MonoBehaviour
         if (spaceKey)
         {
             FireThruster();
+
+            if(!audioSources[0].isPlaying && !audioSources[1].isPlaying)
+            {
+                audioSources[0].Play();
+                audioSources[1].Play();
+            }
+        } else if (audioSources[0].isPlaying && audioSources[1].isPlaying)
+        {
+            audioSources[0].Stop();
+            audioSources[1].Stop();
         }
 
         thrusterFlame.SetActive(spaceKey);
