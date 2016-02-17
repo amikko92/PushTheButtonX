@@ -4,37 +4,49 @@ using System.Collections;
 public class ObstacleManager : MonoBehaviour {
 
     //public PlayerAlive playerAlive;
+
     [SerializeField]
-    private GameObject obstacle;
+    private GameObjectPool[] objectPools;
+
+    [SerializeField]
+    private float spawnFrequency = 1.0f;
 
     [SerializeField]
     private GameObject pod;
 
     [SerializeField]
-    private float spawnTime = 1.0f;
+    private GameObject[] spawnPoints;
 
-    [SerializeField]
-    private Transform[] spawnPoints;
-
-    private GameObjectPool asteroidOP;
+    private GameObjectPool AsteroidPool;
 
     // Use this for initialization
-    void Start () {
-        InvokeRepeating("Spawn",spawnTime, spawnTime);
-        asteroidOP = GetComponent<GameObjectPool>();
+    void Start ()
+    { 
 	}
 	
-    void Spawn()
+    public GameObject ManagerSpawn(SpawnableType s)
     {
         if (pod.transform.position.y > 2)
         {
-            int spawnPointIndex = Random.Range(0, spawnPoints.Length);
-            GameObject spawnObject = asteroidOP.GetPooledObject();
-            if (spawnObject != null)
+            switch (s)
             {
-                spawnObject.transform.position = spawnPoints[spawnPointIndex].position;
-                spawnObject.SetActive(true);
+                case SpawnableType.Asteroid:
+                    foreach (GameObjectPool gop in objectPools)
+                    {
+                        if (gop.CompareTag("AsteroidPool"))
+                        {
+                            AsteroidPool = gop; 
+                        }
+                    }
+                    GameObject asteroid = AsteroidPool.GetPooledObject();
+                    if (asteroid != null)
+                    {
+                        return asteroid;
+                    }
+                    break;
             }
         }
+
+        return null;
     }
 }
