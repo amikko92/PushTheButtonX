@@ -88,12 +88,12 @@ public class DropPod : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-        // Temp test of object state
-        m_objectState.UpdateState();
-
         m_rigidbody2D.gravityScale = GravityScale();
 
-        // E-man: haha! Take that Andreas!
+        // TODO: Add this line when game states are in place
+        //m_objectState.UpdateState();
+
+        // TODO: Remove this line when game states are in place
         FireThruster(Input.GetKey(KeyCode.Space));
     }
 
@@ -283,9 +283,9 @@ public class DropPod : MonoBehaviour
         return gravityScale;
     }
 
-    private void FireThruster(bool spaceKey)
+    public void FireThruster(bool buttonPressed)
     {
-        if (spaceKey && m_fuel > 0.0f)
+        if (buttonPressed && m_fuel > 0.0f)
         {
             m_rigidbody2D.AddForce(m_thruster.ThrustForce());
 

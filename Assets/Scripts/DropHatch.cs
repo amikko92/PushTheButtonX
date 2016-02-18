@@ -15,37 +15,44 @@ public class DropHatch : MonoBehaviour
 
     private Collider2D m_collider2D;
 
+    private ObjectState m_objectState;
+
 	private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
         em = m_motherShipExplosion.emission;
 
         em.enabled = false;
-        
+
+        m_objectState = GetComponent<ObjectState>();
     }
 	
 	private void Update() 
 	{
+        // TODO: Add this line when game states are in place
+        // m_objectState.UpdateState();
+
+        // TODO: Remove the two if-statements when game states are in place
         if (!m_collider2D.enabled)
             return;
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             EjectPod();
+            DestroyMotherShip();
         }
 	}
 
-    private void EjectPod()
+    public void EjectPod()
     {
         m_collider2D.enabled = false;
         if (m_podRigidbody != null)
         {
             m_podRigidbody.AddForce(m_ejectForce);
-            DestroyMotherShip();
         }
     }
 
-    private void DestroyMotherShip()
+    public void DestroyMotherShip()
     {
         m_motherShipExplosion.time = 0.0f;
         em.enabled = true;
