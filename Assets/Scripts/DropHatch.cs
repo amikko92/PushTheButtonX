@@ -40,6 +40,7 @@ public class DropHatch : MonoBehaviour
         {
             EjectPod();
             DestroyMotherShip();
+            GameManager.Instance.ChangeState(gameState.PLAY);
         }
 	}
 

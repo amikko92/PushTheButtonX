@@ -28,6 +28,8 @@ public abstract class ObjectState : MonoBehaviour
         m_stateUpdates.Add(gameState.LOSE, LoseState);
         
         ChangeState(gameState.START);
+
+        GameManager.Instance.AddListener(this);
     }
 
     public void UpdateState()

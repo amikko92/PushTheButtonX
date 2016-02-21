@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class ImageSwitch : GUIHandler {
+public class ImageSwitch : MonoBehaviour {
     
     public Texture active;
     public Texture inactive;
@@ -10,15 +10,17 @@ public class ImageSwitch : GUIHandler {
     public bool up;
 
     private RawImage img;
+    private DropPod pod;
 
 	// Use this for initialization
 	void Start () {
         img = GetComponent<RawImage>();
-	}
+        pod = transform.parent.root.GetComponent<GUIHandler>().pod;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        if (up && target.velocity.y > 0 || !up && target.velocity.y < 0) img.texture = active;
+        if (up && pod.Velocity() > 0 || !up && pod.Velocity() < 0) img.texture = active;
         else img.texture = inactive;
 	}
 }
