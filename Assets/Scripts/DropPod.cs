@@ -49,7 +49,7 @@ public class DropPod : MonoBehaviour
 
     private AudioSource[] audioSources;
 
-    private ObjectState m_objectState;
+    private PodState m_objectState;
     
 	private void Awake() 
 	{
@@ -82,19 +82,14 @@ public class DropPod : MonoBehaviour
         m_verticalRayInterval = width / (m_totalVerticalRays - 1);
 
         audioSources = GetComponents<AudioSource>();
-
-        m_objectState = GetComponent<ObjectState>();
+        m_objectState = GetComponent<PodState>();
     }
 
 	private void FixedUpdate()
 	{
         m_rigidbody2D.gravityScale = GravityScale();
-
-        // TODO: Add this line when game states are in place
-        //m_objectState.UpdateState();
-
-        // TODO: Remove this line when game states are in place
-        FireThruster(Input.GetKey(KeyCode.Space));
+        
+        m_objectState.UpdateState();
     }
 
 
