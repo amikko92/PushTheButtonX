@@ -105,7 +105,7 @@ public class DropPod : MonoBehaviour
 
     public float Velocity()
     {
-        return m_rigidbody2D.velocity.magnitude;
+        return m_rigidbody2D.velocity.y;
     }
 
     public float Fuel()
