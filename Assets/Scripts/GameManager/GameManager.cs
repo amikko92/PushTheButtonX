@@ -7,7 +7,7 @@ public enum gameState { START, PLAY, WIN, LOSE };
 public class GameManager : MonoBehaviour {
 
     // Singleton that is returned when instanciating the GameManager
-    private static GameManager _instance;
+    private static GameManager _instance = null;
 
     private List<ObjectState> _listeners = new List<ObjectState>();
     private gameState _currentState;
@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
     {
         get
         {
-            _instance = GameObject.FindObjectOfType(typeof(GameManager)) as GameManager;
+            //_instance = GameObject.FindObjectOfType(typeof(GameManager)) as GameManager;
 
             if (_instance == null)
             {
@@ -31,7 +31,8 @@ public class GameManager : MonoBehaviour {
                     + typeof(GameManager) + " is needed in the scene, so '"
                     + singleton + "'was created with DontDestroyOnLoad.");
 
-            } else { 
+            }
+            else { 
                 Debug.Log("[Singleton] Using instance already created: " +
                 _instance.gameObject.name);
             }
@@ -64,5 +65,9 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Game state change");
         _currentState = state;
         Notify();
+    }
+    public void Nullify(bool nulli)
+    {
+        GameManager._instance = null;
     }
 }
