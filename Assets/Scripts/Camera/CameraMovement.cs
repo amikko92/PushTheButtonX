@@ -68,28 +68,32 @@ public class CameraMovement : MonoBehaviour
 					newx = Mathf.PerlinNoise(transform.position.x * Time.time * min, transform.position.x * Time.time * max);
 					dest = Mathf.PerlinNoise(transform.position.y * Time.time * min, transform.position.y * Time.time * max);
 					dest = Mathf.Lerp(dest, pod.transform.position.y, smoothSpeed * Time.deltaTime);
-					transform.position = new Vector3(newx, dest + offset, transform.position.z);
+					transform.position = new Vector3(transform.position.x, dest + offset, transform.position.z);
 				}
 				else
 				{
-					if (speed < 6.0f)
-						if (speed < 4.0f)
-							if (speed < 1.0f)
-						{
-							offset = Mathf.Lerp(offset, upAndSlowestOffset, Time.deltaTime);
-						}
-					else
-					{
-						offset = Mathf.Lerp(offset, slowOffset, Time.deltaTime);
-					}
-					else
-					{
-						offset = Mathf.Lerp(offset, midSpeedOffset, Time.deltaTime);
-					}
-					else if (speed > 12.0f)
-					{
-						offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
-					}
+                    if (speed < 6.0f)
+                    {
+                        if (speed < 4.0f)
+                        {
+                            if (speed < 1.0f)
+                            {
+                                offset = Mathf.Lerp(offset, upAndSlowestOffset, Time.deltaTime);
+                            }
+                            else
+                            {
+                                offset = Mathf.Lerp(offset, slowOffset, Time.deltaTime);
+                            }
+                        }
+                        else
+                        {
+                            offset = Mathf.Lerp(offset, midSpeedOffset, Time.deltaTime);
+                        }
+                    }
+                    else if (speed > 12.0f)
+                    {
+                        offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
+                    }
 					newx = transform.position.x;
 					if (pod.transform.position.x <= (transform.position.x - xOffset))
 					{
@@ -100,7 +104,7 @@ public class CameraMovement : MonoBehaviour
 						newx = pod.transform.position.x - xOffset;
 					}
 					dest = Mathf.Lerp(transform.position.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
-					transform.position = new Vector3(newx, dest + offset, transform.position.z);
+					transform.position = new Vector3(transform.position.x, dest + offset, transform.position.z);
 				}
 			}
 		}
