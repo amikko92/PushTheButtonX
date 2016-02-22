@@ -49,7 +49,7 @@ public class DropPod : MonoBehaviour
 
     private AudioSource[] audioSources;
 
-    private PodState m_objectState;
+    private ObjectState m_objectState;
     
 	private void Awake() 
 	{
@@ -82,7 +82,7 @@ public class DropPod : MonoBehaviour
         m_verticalRayInterval = width / (m_totalVerticalRays - 1);
 
         audioSources = GetComponents<AudioSource>();
-        m_objectState = GetComponent<PodState>();
+        m_objectState = GetComponent<ObjectState>();
     }
 
 	private void FixedUpdate()
