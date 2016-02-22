@@ -31,6 +31,7 @@ public class PodState : ObjectState
 
     protected override void InitWinState()
     {
+        m_pod.FireThruster(false);
     }
 
     protected override void WinState()
@@ -39,6 +40,8 @@ public class PodState : ObjectState
 
     protected override void InitLoseState()
     {
+        m_pod.FireThruster(false);
+        m_pod.gameObject.SetActive(false);
     }
 
     protected override void LoseState()

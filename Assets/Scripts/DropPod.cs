@@ -23,7 +23,6 @@ public class DropPod : MonoBehaviour
     private float m_gravityScaleOffset = 0.5f;
 
     private bool m_shield = false;
-
     
     private float m_startAltitude;
 
@@ -84,7 +83,7 @@ public class DropPod : MonoBehaviour
         audioSources = GetComponents<AudioSource>();
         m_objectState = GetComponent<ObjectState>();
     }
-
+    
 	private void FixedUpdate()
 	{
         m_rigidbody2D.gravityScale = GravityScale();
@@ -107,7 +106,7 @@ public class DropPod : MonoBehaviour
     {
         return m_fuel;
     }
-
+    
     public void AddFuel(float amount)
     {
         m_fuel = Mathf.Clamp(m_fuel + amount, 0.0f, m_maxFuel);
@@ -120,23 +119,23 @@ public class DropPod : MonoBehaviour
 
         if( string.Equals(layerName, "Ground") )
         {
-            bool land = LandingSequence(collision);
-            if(land)
+            bool landed = LandingSequence(collision);
+            if(landed)
             {
                 LevelComplete();
             }
             else
             {
-                KillMe();
+                GameOver();
             }
         }
         
         if (string.Equals(layerName, "Platform"))
         {
-            bool land = LandingSequence(collision);
-            if (!land)
+            bool landed = LandingSequence(collision);
+            if (!landed || m_fuel <= 0.0f)
             {
-                KillMe();
+                GameOver();
             }
         }
 
@@ -148,7 +147,7 @@ public class DropPod : MonoBehaviour
             }
             else
             {
-                KillMe();
+                GameOver();
             }
         }
 
@@ -157,12 +156,12 @@ public class DropPod : MonoBehaviour
             Debug.Log("Cloud explosion");
             if (m_rigidbody2D.velocity.y > 0)
             {
-                KillMe();
+                GameOver();
                 Debug.Log("Cloud explosion 4 real");
             }
         }
     }
-
+    
     private bool LandVelocityCheck()
     {
         // If current vertical velocity is within the allowed landing velocity
@@ -198,7 +197,7 @@ public class DropPod : MonoBehaviour
 
         return land;
     }
-
+    
     private bool LandFromAbove(Transform landTarget)
     {
         // Ray origin
@@ -236,17 +235,18 @@ public class DropPod : MonoBehaviour
         return fromAbove;
     }
     
-    private void KillMe()
+    private void GameOver()
     {
-        gameObject.SetActive(false);
-
         // TODO: Explosions and game over event
+        GameManager.Instance.ChangeState(gameState.LOSE);
     }
 
     private void LevelComplete()
     {
         Debug.Log("Landed!");
+
         // TODO: Send level clear event
+        GameManager.Instance.ChangeState(gameState.WIN);
     }
 
     private void RemoveShield()
