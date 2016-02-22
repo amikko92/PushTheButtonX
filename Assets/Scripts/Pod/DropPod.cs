@@ -49,8 +49,14 @@ public class DropPod : MonoBehaviour
     private AudioSource[] audioSources;
 
     private ObjectState m_objectState;
-    
-	private void Awake() 
+
+    private Transform m_meshTransform;
+    [SerializeField]
+    private float m_shakeAmp = 1.0f;
+    [SerializeField]
+    private float m_shakeFreq = 1.0f;
+
+    private void Awake() 
 	{
         m_transform = transform;
         m_rigidbody2D = GetComponent<Rigidbody2D>();
@@ -82,11 +88,13 @@ public class DropPod : MonoBehaviour
 
         audioSources = GetComponents<AudioSource>();
         m_objectState = GetComponent<ObjectState>();
+
+        m_meshTransform = m_transform.FindChild("Ship");
     }
     
 	private void FixedUpdate()
 	{
-        m_rigidbody2D.gravityScale = GravityScale();
+        m_rigidbody2D.gravityScale = CalculateGravityScale();
         
         m_objectState.UpdateState();
     }
@@ -271,7 +279,12 @@ public class DropPod : MonoBehaviour
         // TODO: Shield activation effects here
     }
     
-    private float GravityScale()
+    public float GravityScale()
+    {
+        return m_rigidbody2D.gravityScale;
+    }
+
+    private float CalculateGravityScale()
     {
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
         float gravityScale =  m_gravityScaleOffset + (1.0f - (altitude / m_startAltitude));
@@ -289,6 +302,11 @@ public class DropPod : MonoBehaviour
             // Enable flame
             thrusterFlame.SetActive(true);
 
+            // Shake mesh
+            Vector3 meshPos = m_meshTransform.position;
+            meshPos.x = meshPos.x + (m_shakeAmp * Mathf.Sin(m_shakeFreq * Time.time)) * GravityScale();
+            m_meshTransform.position = meshPos;
+
             if (!audioSources[0].isPlaying && !audioSources[1].isPlaying /*&& !audioSources[2].isPlaying*/)
             {
                 audioSources[0].Play();
@@ -300,6 +318,11 @@ public class DropPod : MonoBehaviour
         {
             // Disable flame
             thrusterFlame.SetActive(false);
+
+            // Reset mesh shake
+            Vector3 meshPos = m_meshTransform.position;
+            meshPos.x = transform.position.x;
+            m_meshTransform.position = meshPos;
 
             if (audioSources[0].isPlaying || audioSources[1].isPlaying)
             {
