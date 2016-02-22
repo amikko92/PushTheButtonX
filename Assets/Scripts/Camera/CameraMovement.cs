@@ -18,6 +18,8 @@ public class CameraMovement : MonoBehaviour
     {
         pod = GameObject.FindGameObjectWithTag("Player");
         startPos = pod.transform.position;
+        startPos.z = -20;
+
         init = transform.position.y;
         //fast = set maxSpeed;
         explosion = false;
@@ -37,7 +39,7 @@ public class CameraMovement : MonoBehaviour
             pod.transform.position = startPos;
             init += 1.0f;
             dest = Mathf.Lerp(transform.position.y, init, scrollSpeed * Time.deltaTime);
-            transform.position = new Vector3(transform.position.x, dest, transform.position.z);
+            transform.position = new Vector3(transform.position.x, dest, -20);
             if ((transform.position.y == startPos.y) || (transform.position.y > startPos.y - 1.0f))
             {
                 startOfGame = false;
@@ -53,14 +55,14 @@ public class CameraMovement : MonoBehaviour
                 {
                     newPos.x = Mathf.PerlinNoise(transform.position.x * Time.time * min, transform.position.x * Time.time * max);
                     newPos.y = Mathf.PerlinNoise(transform.position.y * Time.time * min, transform.position.y * Time.time * max);
-                    newPos.z = transform.position.z;
+                    newPos.z = -40;
                     dest = Mathf.Lerp(newPos.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
                     transform.position = new Vector3(newPos.x, dest - 1.0f, newPos.z);
                 }
                 else
                 {
                     dest = Mathf.Lerp(transform.position.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
-                    transform.position = new Vector3(transform.position.x, dest - 1.0f, transform.position.z);
+                    transform.position = new Vector3(transform.position.x, dest - 1.0f, -20);
                 }
             }
         }
