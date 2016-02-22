@@ -41,6 +41,15 @@ public class SpawnManager : MonoBehaviour {
                         return asteroid;
                     }
                     break;
+                    /*
+                case SpawnableType.Laser:
+                    foreach (GameObjectPool gop in objectPools)
+                    {
+                        if(gop.CompareTag("LaserPool")) SpawnPool = gop;
+                    }
+                    GameObject laser = SpawnPool.GetPooledObject();
+                    if (laser != null) return laser;
+                    break;*/
             }
         }
 
