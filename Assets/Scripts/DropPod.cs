@@ -9,11 +9,13 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
-    [SerializeField, Range(0.0f, 100.0f)]
-    private float m_fuel = 100.0f;
-
-    [SerializeField, Range(0.0f, 100.0f)]
+    [SerializeField, Range(0.0f, m_maxFuel)]
+    private float m_fuel = m_maxFuel;
+    
+    [SerializeField, Range(0.0f, m_maxFuel)]
     private float m_fuelUsePerSecond = 1.0f;
+
+    public const float m_maxFuel = 100.0f;
 
     [Space(10)]
 
@@ -23,7 +25,6 @@ public class DropPod : MonoBehaviour
     private bool m_shield = false;
 
     
-
     private float m_startAltitude;
 
     private Transform m_transform;
@@ -47,6 +48,8 @@ public class DropPod : MonoBehaviour
     private GameObject thrusterFlame;
 
     private AudioSource[] audioSources;
+
+    private ObjectState m_objectState;
     
 	private void Awake() 
 	{
@@ -79,14 +82,14 @@ public class DropPod : MonoBehaviour
         m_verticalRayInterval = width / (m_totalVerticalRays - 1);
 
         audioSources = GetComponents<AudioSource>();
+        m_objectState = GetComponent<ObjectState>();
     }
 
 	private void FixedUpdate()
 	{
         m_rigidbody2D.gravityScale = GravityScale();
-
-        // E-man: haha! Take that Andreas!
-        FireThruster(Input.GetKey(KeyCode.Space));
+        
+        m_objectState.UpdateState();
     }
 
 
@@ -97,12 +100,17 @@ public class DropPod : MonoBehaviour
 
     public float Velocity()
     {
-        return m_rigidbody2D.velocity.magnitude;
+        return m_rigidbody2D.velocity.y;
     }
 
     public float Fuel()
     {
         return m_fuel;
+    }
+
+    public void AddFuel(float amount)
+    {
+        m_fuel = Mathf.Clamp(m_fuel + amount, 0.0f, m_maxFuel);
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
@@ -270,9 +278,9 @@ public class DropPod : MonoBehaviour
         return gravityScale;
     }
 
-    private void FireThruster(bool spaceKey)
+    public void FireThruster(bool buttonPressed)
     {
-        if (spaceKey && m_fuel > 0.0f)
+        if (buttonPressed && m_fuel > 0.0f)
         {
             m_rigidbody2D.AddForce(m_thruster.ThrustForce());
 

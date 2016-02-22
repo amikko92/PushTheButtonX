@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GUIHandler : MonoBehaviour {
 
-    public Rigidbody2D target;
+    public DropPod pod;
 
 	// Use this for initialization
 	void Awake () {
