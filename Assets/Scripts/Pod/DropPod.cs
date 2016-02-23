@@ -56,6 +56,8 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private float m_shakeFreq = 1.0f;
 
+    private GameObject shield;
+
     private void Awake() 
 	{
         m_transform = transform;
@@ -66,6 +68,9 @@ public class DropPod : MonoBehaviour
         m_rayShooter2D = new RayShooter2D();
 
         m_startAltitude = Altitude();
+
+        shield = GameObject.Find("Shield");
+        shield.SetActive(false);
 
         // E-man - Begin
         thrusterFlame = GameObject.Find("ThrusterFlame");
@@ -169,7 +174,19 @@ public class DropPod : MonoBehaviour
             }
         }
     }
-    
+    private void OnTriggerEnter2D(Collider2D c)
+    {
+        GameObject other = c.gameObject;
+        string layerName = LayerMask.LayerToName(other.layer);
+        if (string.Equals(layerName, "ShieldUp"))
+        {
+            AddShield();
+        }
+        if (string.Equals(layerName, "FuelUp"))
+        {
+            //AddFuel(10.0f);
+        }
+    }
     private bool LandVelocityCheck()
     {
         // If current vertical velocity is within the allowed landing velocity
@@ -265,7 +282,7 @@ public class DropPod : MonoBehaviour
 
         m_shield = false;
 
-        // TODO: Shield remove effects here
+        shield.SetActive(false);
     }
 
     private void AddShield()
@@ -276,7 +293,7 @@ public class DropPod : MonoBehaviour
 
         m_shield = true;
 
-        // TODO: Shield activation effects here
+        shield.SetActive(true); 
     }
     
     public float GravityScale()
