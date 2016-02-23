@@ -44,7 +44,6 @@ public class LaserStates : ObjectState
     protected override void PlayState()
     {
         timer += Time.deltaTime;
-        Debug.Log(timer);
 
         if(timer < 2)
         {
