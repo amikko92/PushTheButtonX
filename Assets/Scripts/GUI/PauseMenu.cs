@@ -21,14 +21,15 @@ public class PauseMenu : MonoBehaviour {
         canvas = GetComponent<Canvas>();
         screen = GameObject.Find("Layout");
         screen.SetActive(false);
-        gui = GameObject.Find("Velocity_Element");
+        gui = GameObject.Find("GUIManager/Velocity_Element");
         Handler = GameObject.Find("Input Handler");
         Ihandler = Handler.GetComponent<InputHandler>();
     }
 	
 	void Update ()
     {
-        if (Ihandler.ESC())
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        if(Ihandler.ESC())
         {
             paused = !paused;
             if (paused)

@@ -3,7 +3,6 @@ using System.Collections;
 
 public class DropHatch : MonoBehaviour 
 {
-    [SerializeField]
     private Rigidbody2D m_podRigidbody;
 
     [SerializeField]
@@ -39,23 +38,14 @@ public class DropHatch : MonoBehaviour
 
         Handler = GameObject.Find("Input Handler");
         Ihandler = Handler.GetComponent<InputHandler>();
+
+        GameObject go = GameObject.Find("Pod");
+        m_podRigidbody = go.GetComponent<Rigidbody2D>();
     }
 	
 	private void Update() 
 	{
-        // TODO: Add this line when game states are in place
-        // m_objectState.UpdateState();
-
-        // TODO: Remove the two if-statements when game states are in place
-        if (!m_collider2D.enabled)
-            return;
-
-        if(Ihandler.Pressed())
-        {
-            EjectPod();
-            DestroyMotherShip();
-            GameManager.Instance.ChangeState(gameState.PLAY);
-        }
+        m_objectState.UpdateState();
 	}
 
     public void EjectPod()

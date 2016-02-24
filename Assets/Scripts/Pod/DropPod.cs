@@ -169,14 +169,7 @@ public class DropPod : MonoBehaviour
 
         if (string.Equals(layerName, "Enemy"))
         {
-            if(m_shield)
-            {
-                RemoveShield();
-            }
-            else
-            {
-                GameOver();
-            }
+            EnemyHit();
         }
 
         if(string.Equals(layerName, "Obstacle"))
@@ -275,6 +268,18 @@ public class DropPod : MonoBehaviour
         return fromAbove;
     }
     
+    public void EnemyHit()
+    {
+        if (m_shield)
+        {
+            RemoveShield();
+        }
+        else
+        {
+            GameOver();
+        }
+    }
+
     private void GameOver()
     {
         // E-man: Add explosion

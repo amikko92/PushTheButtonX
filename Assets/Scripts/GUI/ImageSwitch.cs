@@ -15,7 +15,7 @@ public class ImageSwitch : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         img = GetComponent<RawImage>();
-        pod = transform.parent.root.GetComponent<GUIHandler>().pod;
+        pod = transform.root.GetComponent<GUIHandler>().pod;
     }
 	
 	// Update is called once per frame
