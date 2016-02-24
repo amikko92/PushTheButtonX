@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SpawnManager : MonoBehaviour {
 
-    //public PlayerAlive playerAlive;
-
     [SerializeField]
     private GameObjectPool[] objectPools;
+
+    [SerializeField]
+    private SpawnableType[] types;
+
+    public Dictionary<SpawnableType, GameObjectPool> _objectPools;
 
     [SerializeField]
     private GameObject pod;
@@ -14,34 +18,30 @@ public class SpawnManager : MonoBehaviour {
     [SerializeField]
     private GameObject[] spawnPoints;
 
-    private GameObjectPool SpawnPool;
+    /*
+        Initializes a dictionary based on the ObjectPools and Types
+        Note that is important that Element N matches in the serialize 
+        fields.
 
-    // Use this for initialization
-    void Start ()
-    { 
-	}
+    */
+    public void Start()
+    {
+        _objectPools = new Dictionary<SpawnableType, GameObjectPool>();
+
+        for (int i = 0; i < objectPools.Length; i++)
+        {
+            _objectPools.Add(types[i], objectPools[i]);
+        }
+    }
+
 	
     public GameObject ManagerSpawn(SpawnableType s)
     {
+        // TODO: Is this to make sure that the player has not yet landed
+        // what if player lands on a different altitude?
         if (pod.transform.position.y > 2)
         {
-            switch (s)
-            {
-                case SpawnableType.Asteroid:
-                    foreach (GameObjectPool gop in objectPools)
-                    {
-                        if (gop.CompareTag("AsteroidPool"))
-                        {
-                            SpawnPool = gop; 
-                        }
-                    }
-                    GameObject asteroid = SpawnPool.GetPooledObject();
-                    if (asteroid != null)
-                    {
-                        return asteroid;
-                    }
-                    break;
-            }
+            return _objectPools[s].GetPooledObject();
         }
 
         return null;
