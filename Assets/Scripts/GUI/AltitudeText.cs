@@ -13,7 +13,7 @@ public class AltitudeText : MonoBehaviour {
     // Use this for initialization
     void Start () {
         txt = GetComponent<Text>();
-        GUIHandler guih = transform.parent.GetComponent<GUIHandler>();
+        GUIHandler guih = transform.root.GetComponent<GUIHandler>();
         pod = guih.pod;
     }
 	

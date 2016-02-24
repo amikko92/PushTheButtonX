@@ -3,7 +3,6 @@ using System.Collections;
 
 public class DropHatch : MonoBehaviour 
 {
-    [SerializeField]
     private Rigidbody2D m_podRigidbody;
 
     [SerializeField]
@@ -16,8 +15,10 @@ public class DropHatch : MonoBehaviour
     private Collider2D m_collider2D;
 
     private ObjectState m_objectState;
-    
-	private void Awake() 
+    private GameObject Handler;
+    private InputHandler Ihandler;
+
+    private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
         em = m_motherShipExplosion.emission;
@@ -25,23 +26,28 @@ public class DropHatch : MonoBehaviour
         em.enabled = false;
 
         m_objectState = GetComponent<ObjectState>();
+
+        Handler = GameObject.Find("Input Handler");
+        Ihandler = Handler.GetComponent<InputHandler>();
+
+        GameObject go = GameObject.Find("Pod");
+        m_podRigidbody = go.GetComponent<Rigidbody2D>();
     }
 	
 	private void Update() 
 	{
-        // TODO: Add this line when game states are in place
-        // m_objectState.UpdateState();
+        m_objectState.UpdateState();
 
         // TODO: Remove the two if-statements when game states are in place
-        if (!m_collider2D.enabled)
+       /* if (!m_collider2D.enabled)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if(Ihandler.Pressed())
         {
             EjectPod();
             DestroyMotherShip();
             GameManager.Instance.ChangeState(gameState.PLAY);
-        }
+        }*/
 	}
 
     public void EjectPod()
