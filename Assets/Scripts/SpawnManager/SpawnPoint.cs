@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum SpawnableType { Asteroid };
+public enum SpawnableType { Asteroid, Laser};
 
 public class SpawnPoint : MonoBehaviour {
 
