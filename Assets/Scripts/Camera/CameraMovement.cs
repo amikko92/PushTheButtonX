@@ -3,6 +3,8 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
+    public AnimationCurve curve;
+
     private GameObject pod;
     private float smoothSpeed = 1000.0f;
     public bool startOfGame;
