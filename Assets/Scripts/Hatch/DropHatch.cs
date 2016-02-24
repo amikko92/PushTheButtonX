@@ -22,7 +22,7 @@ public class DropHatch : MonoBehaviour
         m_collider2D = GetComponent<Collider2D>();
 
         // E-man - Begin
-        motherShipExplosion = GameObject.Find("Explosion");
+        motherShipExplosion = GameObject.Find("MotherShipExplosion");
 
         if (motherShipExplosion)
         {
