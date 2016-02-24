@@ -15,5 +15,15 @@ public class Laser : MonoBehaviour {
 	void Update () {
         m_state.UpdateState();
 	}
-    
+
+    void OnTriggerStay2D(Collider2D col)
+    {
+        Debug.Log("Colliding with something");
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        Debug.Log("Colliding with something");
+    }
+
 }

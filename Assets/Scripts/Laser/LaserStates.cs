@@ -6,9 +6,11 @@ public class LaserStates : ObjectState
 {
 
     private Laser m_laser;
-    public Transform m_pod;
+    private GameObject _go;
+    private Transform m_pod;
 
-    private float _offset = 10, _speed = 0.3f;
+    private float _offset = 0, _acc = 0.02f, _speed = 0.0f;
+    public int size, startPoint, endPoint;
     float timer;
     Vector3 _position;
     LineRenderer m_beam;
@@ -19,6 +21,8 @@ public class LaserStates : ObjectState
     protected override void Awake()
     {
         base.Awake();
+        _go = GameObject.Find("Pod");
+        m_pod = _go.GetComponent<Transform>();
         m_laser = GetComponent<Laser>();
         m_beam = GetComponentInChildren<LineRenderer>();
 
@@ -38,7 +42,6 @@ public class LaserStates : ObjectState
     {
         timer = 0.0f;
         shot = false;
-        m_laser.gameObject.SetActive(true);
     }
 
     protected override void PlayState()
@@ -65,9 +68,17 @@ public class LaserStates : ObjectState
     private void UpdateSpeed()
     {
         if (m_laser.transform.position.y < m_pod.transform.position.y - _offset )
-            _speed =  System.Math.Abs(_speed); 
+            _speed +=  System.Math.Abs(_acc); 
         else if (m_laser.transform.position.y > m_pod.transform.position.y + _offset )
-            _speed = System.Math.Abs(_speed) * (-1);
+            _speed += System.Math.Abs(_acc) * (-1);
+
+        float max = 0.3f;
+        if(System.Math.Abs(_speed) > max)
+        {
+            if (_speed < 0.0f) _speed = (-1) * max;
+            else _speed = max;
+        }
+
     }
 
     private void UpdatePosition()
@@ -79,8 +90,10 @@ public class LaserStates : ObjectState
 
     private void InitBeam()
     {
+        BoxCollider2D bc = m_laser.GetComponent<BoxCollider2D>();
+        bc.enabled = true;
+
         shot = true;
-        int size = 10, startPoint = 17, endPoint = -17;
         vertexPositions = new List<Vector3>();
         vertexPositions.Add(new Vector3(startPoint, 0, 0));
 
@@ -98,7 +111,7 @@ public class LaserStates : ObjectState
     {
         for(int i = 1; i < vertexPositions.Count - 1; i++) {
             Vector3 vec = vertexPositions[i];
-            vec.y = Random.Range(-2, 2);
+            vec.y = Random.Range(-0.5f, 0.5f);
             m_beam.SetPosition(i, vec);
         }
         
