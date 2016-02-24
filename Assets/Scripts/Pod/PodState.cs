@@ -4,11 +4,16 @@ using System.Collections;
 public class PodState : ObjectState
 {
     private DropPod m_pod;
+    private GameObject Handler;
+    private InputHandler Ihandler;
 
     protected override void Awake()
     {
         base.Awake();
         m_pod = GetComponent<DropPod>();
+
+        Handler = GameObject.Find("Input Handler");
+        Ihandler = Handler.GetComponent<InputHandler>();
     }
     
     protected override void InitStartState()
@@ -25,7 +30,7 @@ public class PodState : ObjectState
 
     protected override void PlayState()
     {
-        bool pressed = Input.GetKey(KeyCode.Space);
+        bool pressed = Ihandler.Held();//Input.GetKey(KeyCode.Space);
         m_pod.FireThruster(pressed);
     }
 
