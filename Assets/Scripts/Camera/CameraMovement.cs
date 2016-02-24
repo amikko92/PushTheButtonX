@@ -115,7 +115,9 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if(transform.position.y >= startPos.y)
+        var vertExtent = GetComponent<Camera>().orthographicSize;
+        float checkPos = startPos.y + vertExtent;
+        if (transform.position.y >= checkPos)
         {
             return true;
         }
