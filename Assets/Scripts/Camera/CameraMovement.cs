@@ -57,7 +57,7 @@ public class CameraMovement : MonoBehaviour
         {
             if (startOfGame)
             {
-                dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed);// * Time.deltaTime);
+                dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed * Time.deltaTime);
                 transform.position = new Vector3(transform.position.x, dest, transform.position.z);
             }
             else if (pod && play)
@@ -115,7 +115,7 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if(transform.position == startPos)
+        if(transform.position.y == startPos.y)
         {
             return true;
         }

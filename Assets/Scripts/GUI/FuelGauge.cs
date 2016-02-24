@@ -11,7 +11,7 @@ public class FuelGauge : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         img = GetComponent<RectTransform>();
-        pod = transform.parent.root.GetComponent<GUIHandler>().pod;
+        pod = transform.root.GetComponent<GUIHandler>().pod;
     }
 	
 	// Update is called once per frame
