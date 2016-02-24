@@ -9,6 +9,9 @@ public class LaserStates : ObjectState
     private GameObject _go;
     private Transform m_pod;
 
+    [SerializeField]
+    protected bool startActive;
+
     private float _offset = 0, _acc = 0.02f, _speed = 0.0f;
     public int size, startPoint, endPoint;
     float timer;
@@ -26,7 +29,7 @@ public class LaserStates : ObjectState
         m_laser = GetComponent<Laser>();
         m_beam = GetComponentInChildren<LineRenderer>();
 
-        m_laser.gameObject.SetActive(false);
+        m_laser.gameObject.SetActive(startActive);
         m_beam.gameObject.SetActive(false);
     }
 
@@ -47,21 +50,25 @@ public class LaserStates : ObjectState
     protected override void PlayState()
     {
         timer += Time.deltaTime;
+        if (true)
+        {
+            if (timer < 2)
+            {
+                UpdateSpeed();
+                UpdatePosition();
+            }
+            else if (timer > 2 && timer < 2.5)
+            {
 
-        if(timer < 2)
-        {
-            UpdateSpeed();
-            UpdatePosition();
-        }
-        else if(timer > 2 && timer < 2.5)
-        {
+            }
 
+            else
+            {
+                if (!shot) InitBeam();
+                UpdateBeam();
+            }
         }
-        else
-        {
-            if (!shot) InitBeam();
-            UpdateBeam();
-        }
+        
         
     }
 
