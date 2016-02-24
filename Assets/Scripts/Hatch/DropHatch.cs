@@ -9,9 +9,8 @@ public class DropHatch : MonoBehaviour
     [SerializeField]
     private Vector2 m_ejectForce;
 
-    [SerializeField]
-    private ParticleSystem m_motherShipExplosion;
-    ParticleSystem.EmissionModule em;
+    // E-man
+    private GameObject motherShipExplosion; 
 
     private Collider2D m_collider2D;
 
@@ -22,9 +21,19 @@ public class DropHatch : MonoBehaviour
     private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
-        em = m_motherShipExplosion.emission;
 
-        em.enabled = false;
+        // E-man - Begin
+        motherShipExplosion = GameObject.Find("Explosion");
+
+        if (motherShipExplosion)
+        {
+            motherShipExplosion.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("DopHatch::Awake(), Hey buddy! Can't find your explosion guy!");
+        }
+        // E-man - End
 
         m_objectState = GetComponent<ObjectState>();
 
@@ -60,10 +69,10 @@ public class DropHatch : MonoBehaviour
 
     public void DestroyMotherShip()
     {
-        m_motherShipExplosion.time = 0.0f;
-        em.enabled = true;
-        m_motherShipExplosion.loop = false;
-        
+        // E-man: Add explosion        
+        motherShipExplosion.SetActive(true);
+        motherShipExplosion.transform.SetParent(null);
+
         transform.root.gameObject.SetActive(false);
     }
 }
