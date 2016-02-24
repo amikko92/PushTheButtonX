@@ -8,7 +8,6 @@ public class EndGame : ObjectState
     Canvas canvas;
     private GameObject lost;
     private GameObject win;
-    private Text lostText;
     protected override void Awake()
     {
         base.Awake();
@@ -17,7 +16,6 @@ public class EndGame : ObjectState
     protected override void InitStartState()
     {
         canvas = GetComponent<Canvas>();
-        canvas.enabled = false;
         lost = GameObject.Find("Lost");
         lost.SetActive(false);
         win = GameObject.Find("Won");
@@ -38,7 +36,6 @@ public class EndGame : ObjectState
 
     protected override void InitWinState()
     {
-        canvas.enabled = true;
         win.SetActive(true);
     }
 
@@ -49,7 +46,6 @@ public class EndGame : ObjectState
 
     protected override void InitLoseState()
     {
-        canvas.enabled = true;
         lost.SetActive(true);
     }
 

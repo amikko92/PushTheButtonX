@@ -16,8 +16,10 @@ public class DropHatch : MonoBehaviour
     private Collider2D m_collider2D;
 
     private ObjectState m_objectState;
-    
-	private void Awake() 
+    private GameObject Handler;
+    private InputHandler Ihandler;
+
+    private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
         em = m_motherShipExplosion.emission;
@@ -25,6 +27,9 @@ public class DropHatch : MonoBehaviour
         em.enabled = false;
 
         m_objectState = GetComponent<ObjectState>();
+
+        Handler = GameObject.Find("Input Handler");
+        Ihandler = Handler.GetComponent<InputHandler>();
     }
 	
 	private void Update() 
@@ -36,7 +41,7 @@ public class DropHatch : MonoBehaviour
         if (!m_collider2D.enabled)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if(Ihandler.Pressed())
         {
             EjectPod();
             DestroyMotherShip();
