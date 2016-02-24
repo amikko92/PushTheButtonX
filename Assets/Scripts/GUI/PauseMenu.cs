@@ -12,6 +12,7 @@ public class PauseMenu : MonoBehaviour {
     public GUISkin mySkin;
     Canvas canvas;
     private GameObject screen;
+    private GameObject gui;
     private GameObject Handler;
     private InputHandler Ihandler;
 
@@ -20,6 +21,7 @@ public class PauseMenu : MonoBehaviour {
         canvas = GetComponent<Canvas>();
         screen = GameObject.Find("Layout");
         screen.SetActive(false);
+        gui = GameObject.Find("Velocity_Element");
         Handler = GameObject.Find("Input Handler");
         Ihandler = Handler.GetComponent<InputHandler>();
     }
@@ -33,11 +35,13 @@ public class PauseMenu : MonoBehaviour {
             {
                 Time.timeScale = 0;
                 screen.SetActive(true);
+                gui.SetActive(false);
             }
             else
             {
                 Time.timeScale = 1;
                 screen.SetActive(false);
+                gui.SetActive(true);
             }
         }
     }
