@@ -58,7 +58,9 @@ public class DropHatch : MonoBehaviour
         m_motherShipExplosion.time = 0.0f;
         em.enabled = true;
         m_motherShipExplosion.loop = false;
-        
+
+        m_motherShipExplosion.transform.SetParent(null);
+
         transform.root.gameObject.SetActive(false);
     }
 }
