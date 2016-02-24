@@ -25,8 +25,8 @@ public class HatchState : ObjectState
 
     protected override void StartState()
     {
-        if (!m_cam.AtTop())
-            return;
+        // Add this when at top works
+        if (!m_cam.AtTop()) return;
 
         bool pressed = m_inputHandler.Pressed();
 
