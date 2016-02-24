@@ -11,9 +11,10 @@ public class AltitudeText : MonoBehaviour {
     private float offset = 0.5f;
 
     // Use this for initialization
-    void Awake () {
+    void Start () {
         txt = GetComponent<Text>();
-        pod = transform.parent.root.GetComponent<GUIHandler>().pod;
+        GUIHandler guih = transform.parent.GetComponent<GUIHandler>();
+        pod = guih.pod;
     }
 	
 	// Update is called once per frame

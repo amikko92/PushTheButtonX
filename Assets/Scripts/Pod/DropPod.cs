@@ -23,7 +23,6 @@ public class DropPod : MonoBehaviour
     private float m_gravityScaleOffset = 0.5f;
 
     private bool m_shield = false;
-
     
     private float m_startAltitude;
 
@@ -50,8 +49,16 @@ public class DropPod : MonoBehaviour
     private AudioSource[] audioSources;
 
     private ObjectState m_objectState;
-    
-	private void Awake() 
+
+    private Transform m_meshTransform;
+    [SerializeField]
+    private float m_shakeAmp = 1.0f;
+    [SerializeField]
+    private float m_shakeFreq = 1.0f;
+
+    private GameObject shield;
+
+    private void Awake() 
 	{
         m_transform = transform;
         m_rigidbody2D = GetComponent<Rigidbody2D>();
@@ -61,6 +68,9 @@ public class DropPod : MonoBehaviour
         m_rayShooter2D = new RayShooter2D();
 
         m_startAltitude = Altitude();
+
+        shield = GameObject.Find("Shield");
+        shield.SetActive(false);
 
         // E-man - Begin
         thrusterFlame = GameObject.Find("ThrusterFlame");
@@ -83,11 +93,13 @@ public class DropPod : MonoBehaviour
 
         audioSources = GetComponents<AudioSource>();
         m_objectState = GetComponent<ObjectState>();
-    }
 
+        m_meshTransform = m_transform.FindChild("Ship");
+    }
+    
 	private void FixedUpdate()
 	{
-        m_rigidbody2D.gravityScale = GravityScale();
+        m_rigidbody2D.gravityScale = CalculateGravityScale();
         
         m_objectState.UpdateState();
     }
@@ -107,7 +119,7 @@ public class DropPod : MonoBehaviour
     {
         return m_fuel;
     }
-
+    
     public void AddFuel(float amount)
     {
         m_fuel = Mathf.Clamp(m_fuel + amount, 0.0f, m_maxFuel);
@@ -120,23 +132,23 @@ public class DropPod : MonoBehaviour
 
         if( string.Equals(layerName, "Ground") )
         {
-            bool land = LandingSequence(collision);
-            if(land)
+            bool landed = LandingSequence(collision);
+            if(landed)
             {
                 LevelComplete();
             }
             else
             {
-                KillMe();
+                GameOver();
             }
         }
         
         if (string.Equals(layerName, "Platform"))
         {
-            bool land = LandingSequence(collision);
-            if (!land)
+            bool landed = LandingSequence(collision);
+            if (!landed || m_fuel <= 0.0f)
             {
-                KillMe();
+                GameOver();
             }
         }
 
@@ -148,7 +160,7 @@ public class DropPod : MonoBehaviour
             }
             else
             {
-                KillMe();
+                GameOver();
             }
         }
 
@@ -157,12 +169,24 @@ public class DropPod : MonoBehaviour
             Debug.Log("Cloud explosion");
             if (m_rigidbody2D.velocity.y > 0)
             {
-                KillMe();
+                GameOver();
                 Debug.Log("Cloud explosion 4 real");
             }
         }
     }
-
+    private void OnTriggerEnter2D(Collider2D c)
+    {
+        GameObject other = c.gameObject;
+        string layerName = LayerMask.LayerToName(other.layer);
+        if (string.Equals(layerName, "ShieldUp"))
+        {
+            AddShield();
+        }
+        if (string.Equals(layerName, "FuelUp"))
+        {
+            //AddFuel(10.0f);
+        }
+    }
     private bool LandVelocityCheck()
     {
         // If current vertical velocity is within the allowed landing velocity
@@ -198,7 +222,7 @@ public class DropPod : MonoBehaviour
 
         return land;
     }
-
+    
     private bool LandFromAbove(Transform landTarget)
     {
         // Ray origin
@@ -236,17 +260,18 @@ public class DropPod : MonoBehaviour
         return fromAbove;
     }
     
-    private void KillMe()
+    private void GameOver()
     {
-        gameObject.SetActive(false);
-
         // TODO: Explosions and game over event
+        GameManager.Instance.ChangeState(gameState.LOSE);
     }
 
     private void LevelComplete()
     {
         Debug.Log("Landed!");
+
         // TODO: Send level clear event
+        GameManager.Instance.ChangeState(gameState.WIN);
     }
 
     private void RemoveShield()
@@ -257,7 +282,7 @@ public class DropPod : MonoBehaviour
 
         m_shield = false;
 
-        // TODO: Shield remove effects here
+        shield.SetActive(false);
     }
 
     private void AddShield()
@@ -268,10 +293,15 @@ public class DropPod : MonoBehaviour
 
         m_shield = true;
 
-        // TODO: Shield activation effects here
+        shield.SetActive(true); 
     }
     
-    private float GravityScale()
+    public float GravityScale()
+    {
+        return m_rigidbody2D.gravityScale;
+    }
+
+    private float CalculateGravityScale()
     {
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
         float gravityScale =  m_gravityScaleOffset + (1.0f - (altitude / m_startAltitude));
@@ -289,6 +319,11 @@ public class DropPod : MonoBehaviour
             // Enable flame
             thrusterFlame.SetActive(true);
 
+            // Shake mesh
+            Vector3 meshPos = m_meshTransform.position;
+            meshPos.x = meshPos.x + (m_shakeAmp * Mathf.Sin(m_shakeFreq * Time.time)) * GravityScale();
+            m_meshTransform.position = meshPos;
+
             if (!audioSources[0].isPlaying && !audioSources[1].isPlaying /*&& !audioSources[2].isPlaying*/)
             {
                 audioSources[0].Play();
@@ -300,6 +335,11 @@ public class DropPod : MonoBehaviour
         {
             // Disable flame
             thrusterFlame.SetActive(false);
+
+            // Reset mesh shake
+            Vector3 meshPos = m_meshTransform.position;
+            meshPos.x = transform.position.x;
+            m_meshTransform.position = meshPos;
 
             if (audioSources[0].isPlaying || audioSources[1].isPlaying)
             {

@@ -4,34 +4,62 @@ using System.Collections;
 public class MovingPlatform : MonoBehaviour 
 {
     [SerializeField]
-    private float m_velocity;
-
+    private float m_maxVelocity = 1.0f;
+    
     [SerializeField]
-    private float m_dirTime = 4.0f;
+    private Transform m_target;
+    
+    private ConstantForce2D m_constantForce;
 
-    private Rigidbody2D m_rigidbody2D;
+    private Vector2 m_startPos;
+    private Vector2 m_endPos;
+    private Vector2 m_curTarget;
+    private float m_distSqrDivision;
 
-    private float m_time;
     private Vector2 m_direction;
 
-	private void Awake() 
+    private float m_traveledDistSqr;
+
+    private void Awake() 
 	{
-        m_rigidbody2D = GetComponent<Rigidbody2D>();
-        m_direction = Vector2.right;
+        m_startPos = transform.position;
+        m_endPos = m_target.position;
+
+        m_constantForce = GetComponent<ConstantForce2D>();
+
+        m_direction = m_endPos - m_startPos;
+        m_direction.Normalize();
+        m_distSqrDivision = 1.0f / Vector2.SqrMagnitude(m_direction);
+        m_curTarget = m_endPos;
 	}
 	
 	private void Update() 
 	{
-        m_time += Time.deltaTime;
+        Vector2 force = Vector2.zero;
+
+        float curDistSqr = Vector2.SqrMagnitude((Vector2)transform.position - m_curTarget);
+        float step = curDistSqr * m_distSqrDivision;
+
+        force += Vector2.Lerp(Vector2.zero, m_direction * m_maxVelocity, step);
+        force += Vector2.Lerp(-m_direction * m_maxVelocity, Vector2.zero, step);
+        
+        m_constantForce.force = force;
+
+        if(step <= 0.1f)
+        {
+            ChangeDirection();
+        }
 	}
 
-    private void FixedUpdate()
+    private void ChangeDirection()
     {
-        m_rigidbody2D.velocity = m_direction * m_velocity;
-        if(m_time >= m_dirTime)
-        {
-            m_direction *= -1;
-            m_time = 0.0f;
-        }
+        m_curTarget = (m_curTarget == m_endPos) ? m_startPos : m_endPos;
+        m_direction *= -1.0f;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(m_target.position, 1.0f);
     }
 }

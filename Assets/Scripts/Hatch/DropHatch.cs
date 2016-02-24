@@ -16,7 +16,7 @@ public class DropHatch : MonoBehaviour
     private Collider2D m_collider2D;
 
     private ObjectState m_objectState;
-
+    
 	private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
