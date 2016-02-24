@@ -37,17 +37,6 @@ public class DropHatch : MonoBehaviour
 	private void Update() 
 	{
         m_objectState.UpdateState();
-
-        // TODO: Remove the two if-statements when game states are in place
-       /* if (!m_collider2D.enabled)
-            return;
-
-        if(Ihandler.Pressed())
-        {
-            EjectPod();
-            DestroyMotherShip();
-            GameManager.Instance.ChangeState(gameState.PLAY);
-        }*/
 	}
 
     public void EjectPod()
