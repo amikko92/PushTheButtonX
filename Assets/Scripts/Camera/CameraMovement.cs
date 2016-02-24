@@ -62,7 +62,7 @@ public class CameraMovement : MonoBehaviour
             }
             else if (pod && play)
             {
-                if (transform.position.y <= (startPos.y + 5.0f))
+                if (transform.position.y <= (startPos.y + 0.1f))
                 {
                     if ((explosion))/*pod.speed >= fast) || explosion)*/
                     {
@@ -115,7 +115,7 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if (transform.position.y >= (startPos.y+5.0f))
+        if (transform.position.y >= (startPos.y + 0.1f))
         {
             return true;
         }
