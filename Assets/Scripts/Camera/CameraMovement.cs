@@ -115,7 +115,7 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if(transform.position.y == startPos.y)
+        if(transform.position.y >= startPos.y)
         {
             return true;
         }
