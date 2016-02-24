@@ -25,6 +25,8 @@ public class CameraMovement : MonoBehaviour
     //X offset is the offset for x when the pod moves to __ amount to one side of the camera. after __, camera starts to follow
     //pod rather than letting it slide to the side of the camera.
     public float xOffset = 15.0f;
+    private float camSpeed;
+    private float topOffset;
 
 
 
@@ -50,7 +52,9 @@ public class CameraMovement : MonoBehaviour
     void FixedUpdate()
     { 
         speed = pod.GetComponent<Rigidbody2D>().velocity.y * -1;
+        camSpeed = pod.GetComponent<Rigidbody2D>().velocity.y * -1;
     }
+
     void LateUpdate()
     {
         if (Time.timeScale != 0)
@@ -59,6 +63,7 @@ public class CameraMovement : MonoBehaviour
             {
                 dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed * Time.deltaTime);
                 transform.position = new Vector3(transform.position.x, dest, transform.position.z);
+
             }
             else if (pod && play)
             {
@@ -115,7 +120,7 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if (transform.position.y >= (startPos.y + 0.1f))
+        if (transform.position.y >= (startPos.y - 1.0f))
         {
             return true;
         }
