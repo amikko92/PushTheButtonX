@@ -21,6 +21,7 @@ public class CameraState : ObjectState
 
     protected override void InitPlayState()
     {
+        m_cam.GamePlay();
     }
 
     protected override void PlayState()

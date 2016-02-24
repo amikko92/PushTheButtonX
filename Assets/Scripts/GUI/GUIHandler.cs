@@ -11,7 +11,7 @@ public class GUIHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        GameObject go = GameObject.Find("Pod");
+        GameObject go = GameObject.FindGameObjectWithTag("Player");
         m_pod = go.GetComponent<DropPod>();
     }
 	

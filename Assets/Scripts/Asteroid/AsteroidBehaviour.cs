@@ -13,16 +13,9 @@ public class AsteroidBehaviour : MonoBehaviour {
        startPos = transform.position;
     }
 
-	// Update is called once per frame
-	void Update () {
-
-        if (transform.position.x > 50 || transform.position.x < -50)
-        {
-            gameObject.SetActive(false);
-        }
-
-        else
-        {
+    // Update is called once per frame
+    void Update()
+    {
             if (startPos.x <= 0)
             {
                 transform.Translate(translationFactor * Time.deltaTime);
@@ -31,13 +24,19 @@ public class AsteroidBehaviour : MonoBehaviour {
             else
             {
                 transform.Translate(-translationFactor * Time.deltaTime);
-            }
-        }
-         
+            }        
 	}
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         gameObject.SetActive(false);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("RightBound"))
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

@@ -11,23 +11,38 @@ public class PauseMenu : MonoBehaviour {
     bool showControls;
     public GUISkin mySkin;
     Canvas canvas;
+    private GameObject screen;
+    private GameObject gui;
+    private GameObject Handler;
+    private InputHandler Ihandler;
+
     void Awake () {
         paused = false;
         canvas = GetComponent<Canvas>();
-        canvas.enabled = false;
+        screen = GameObject.Find("Layout");
+        screen.SetActive(false);
+        gui = GameObject.Find("GUIManager/Velocity_Element");
+        Handler = GameObject.Find("Input Handler");
+        Ihandler = Handler.GetComponent<InputHandler>();
     }
 	
 	void Update ()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        if(Ihandler.ESC())
         {
             paused = !paused;
-            canvas.enabled = !canvas.enabled;
             if (paused)
+            {
                 Time.timeScale = 0;
+                screen.SetActive(true);
+                gui.SetActive(false);
+            }
             else
             {
                 Time.timeScale = 1;
+                screen.SetActive(false);
+                gui.SetActive(true);
             }
         }
     }
@@ -38,6 +53,11 @@ public class PauseMenu : MonoBehaviour {
         #else
                 Application.Quit();
         #endif
+    }
+    public void ReturnGame()
+    {
+        Time.timeScale = 1;
+        screen.SetActive(false);
     }
 }
 
