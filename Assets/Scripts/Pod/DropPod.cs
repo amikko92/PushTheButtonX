@@ -58,6 +58,9 @@ public class DropPod : MonoBehaviour
 
     private GameObject shield;
 
+    // E-man
+    private GameObject dieExplosion;
+
     private void Awake() 
 	{
         m_transform = transform;
@@ -82,6 +85,18 @@ public class DropPod : MonoBehaviour
         else
         {
             Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
+        }
+
+        // Now find the explosion element
+        dieExplosion = GameObject.Find("Explosion");
+
+        if (dieExplosion)
+        {
+            dieExplosion.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("DopPod::Awake(), Hey buddy! Can't find your explosion guy!");
         }
         // E-man - End
 
@@ -154,14 +169,7 @@ public class DropPod : MonoBehaviour
 
         if (string.Equals(layerName, "Enemy"))
         {
-            if(m_shield)
-            {
-                RemoveShield();
-            }
-            else
-            {
-                GameOver();
-            }
+            EnemyHit();
         }
 
         if(string.Equals(layerName, "Obstacle"))
@@ -260,8 +268,24 @@ public class DropPod : MonoBehaviour
         return fromAbove;
     }
     
+    public void EnemyHit()
+    {
+        if (m_shield)
+        {
+            RemoveShield();
+        }
+        else
+        {
+            GameOver();
+        }
+    }
+
     private void GameOver()
     {
+        // E-man: Add explosion
+        dieExplosion.SetActive(true);
+        dieExplosion.transform.SetParent(null);
+
         // TODO: Explosions and game over event
         GameManager.Instance.ChangeState(gameState.LOSE);
     }

@@ -3,6 +3,8 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
+    public AnimationCurve curve;
+
     private GameObject pod;
     private float smoothSpeed = 1000.0f;
     public bool startOfGame;
@@ -115,7 +117,7 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if (transform.position.y >= (startPos.y + 0.1f))
+        if (transform.position.y >= (startPos.y - 0.5f))
         {
             return true;
         }
