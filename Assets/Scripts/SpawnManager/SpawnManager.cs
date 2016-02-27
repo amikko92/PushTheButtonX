@@ -4,13 +4,8 @@ using System.Collections.Generic;
 
 public class SpawnManager : MonoBehaviour {
 
-    [SerializeField]
-    private GameObjectPool[] objectPools;
-
-    [SerializeField]
-    private SpawnableType[] types;
-
-    public Dictionary<SpawnableType, GameObjectPool> _objectPools;
+    // Singleton that is returned when instanciating the GameManager
+    private static SpawnManager _instance = null;
 
     [SerializeField]
     private GameObject pod;
@@ -18,32 +13,60 @@ public class SpawnManager : MonoBehaviour {
     [SerializeField]
     private GameObject[] spawnPoints;
 
+    [SerializeField]
+    private PoolDictionary poolDictionary;
+
+    private SpawnManager() { }
+
     /*
         Initializes a dictionary based on the ObjectPools and Types
         Note that is important that Element N matches in the serialize 
         fields.
 
     */
-    public void Start()
+    public void Awake()
     {
-        _objectPools = new Dictionary<SpawnableType, GameObjectPool>();
+        GameObject go = GameObject.Find("PoolDictionary");
+        Instance.poolDictionary = go.GetComponent<PoolDictionary>();
+        int i = 0;
+    }
 
-        for (int i = 0; i < objectPools.Length; i++)
+    public static SpawnManager Instance
+    {
+        get
         {
-            _objectPools.Add(types[i], objectPools[i]);
+            //_instance = GameObject.FindObjectOfType(typeof(GameManager)) as GameManager;
+
+            if (_instance == null)
+            {
+                GameObject singleton = new GameObject();
+                _instance = singleton.AddComponent<SpawnManager>();
+                singleton.name = "(singleton) " + typeof(SpawnManager).ToString();
+                
+                
+                DontDestroyOnLoad(singleton);
+
+                Debug.Log("[Singleton] An instandce of "
+                    + typeof(GameManager) + " is needed in the scene, so '"
+                    + singleton + "'was created with DontDestroyOnLoad.");
+
+            }
+            else {
+                Debug.Log("[Singleton] Using instance already created: " +
+                _instance.gameObject.name);
+            }
+
+            return _instance;
         }
     }
 
-	
-    public GameObject ManagerSpawn(SpawnableType s)
-    {
-        // TODO: Is this to make sure that the player has not yet landed
-        // what if player lands on a different altitude?
-        if (pod.transform.position.y > 2)
-        {
-            return _objectPools[s].GetPooledObject();
-        }
 
-        return null;
+    public GameObject GetObjectToSpawn(SpawnableType s)
+    {
+        Debug.Log(poolDictionary);
+        GameObjectPool gop = poolDictionary.Get(s);
+        
+
+        return gop.GetPooledObject();
     }
 }

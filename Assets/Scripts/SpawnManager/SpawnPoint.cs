@@ -56,7 +56,7 @@ public class SpawnPoint : MonoBehaviour {
     public void PointSpawn()
     {
 
-        GameObject spawn = spawnManager.ManagerSpawn(spawnType);
+        GameObject spawn = SpawnManager.Instance.GetObjectToSpawn(spawnType);
         if (spawn != null)
         {
             spawn.transform.position = transform.position;
