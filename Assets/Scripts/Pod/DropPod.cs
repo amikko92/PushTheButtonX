@@ -19,9 +19,6 @@ public class DropPod : MonoBehaviour
 
     [Space(10)]
 
-    //[SerializeField, Range(0.0f, 1.0f)]
-    //private float m_gravityScaleOffset = 0.5f;
-
     [SerializeField]
     private AnimationCurve m_gravityCurve;
 
@@ -331,9 +328,7 @@ public class DropPod : MonoBehaviour
     private float CalculateGravityScale()
     {
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
-        //float gravityScale =  m_gravityScaleOffset + (1.0f - (altitude / m_startAltitude));
         float gravityScale = m_gravityCurve.Evaluate(1.0f - (altitude / m_startAltitude));
-        Debug.Log(gravityScale);
         return gravityScale;
     }
 
