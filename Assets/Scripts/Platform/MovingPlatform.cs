@@ -31,6 +31,8 @@ public class MovingPlatform : MonoBehaviour
         m_direction.Normalize();
         m_distSqrDivision = 1.0f / Vector2.SqrMagnitude(m_direction);
         m_curTarget = m_endPos;
+
+        m_pod = null;
 	}
 	
 	private void Update() 
@@ -42,8 +44,16 @@ public class MovingPlatform : MonoBehaviour
 
         force += Vector2.Lerp(Vector2.zero, m_direction * m_maxVelocity, step);
         force += Vector2.Lerp(-m_direction * m_maxVelocity, Vector2.zero, step);
-        
-        m_constantForce.force = force;
+
+        //m_constantForce.force = force;
+        //GetComponent<Rigidbody2D>().MovePosition((Vector2)transform.position + Vector2.right * Time.deltaTime);
+        transform.Translate(Vector2.left * 4f * Time.deltaTime);
+
+        if(m_pod !=null)
+        {
+            Debug.Log("Push");
+            m_pod.transform.Translate(Vector2.left * 4f * Time.deltaTime);
+        }
 
         if(step <= 0.1f)
         {
@@ -61,5 +71,27 @@ public class MovingPlatform : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(m_target.position, 1.0f);
+    }
+
+    private Rigidbody2D m_pod;
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        GameObject go = collision.gameObject;
+        if(go.CompareTag("Player"))
+        {
+            m_pod = go.GetComponent<Rigidbody2D>();
+            //go.transform.SetParent(transform);
+        }
+    }
+    
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        GameObject go = collision.gameObject;
+        if (go.CompareTag("Player"))
+        {
+            m_pod.AddForce(Vector2.left * 4f * Time.deltaTime * GetComponent<Rigidbody2D>().mass);
+            m_pod = null;
+            //go.transform.SetParent(null);
+        }
     }
 }
