@@ -8,6 +8,10 @@ public class AsteroidBehaviour : MonoBehaviour {
 
     private Vector3 startPos;
 
+    //TOFDO
+    //make this crap work
+    private Vector3 rotation = new Vector3(0, 0 , -1);
+
     void OnEnable()
     {
        startPos = transform.position;
@@ -16,14 +20,18 @@ public class AsteroidBehaviour : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        //TOFDO
+        //make this crap work
+        transform.Rotate(rotation * 50 * Time.deltaTime, Space.Self);
+
             if (startPos.x <= 0)
             {
-                transform.Translate(translationFactor * Time.deltaTime);
+                transform.Translate(translationFactor * Time.deltaTime, Space.World);
             }
 
             else
             {
-                transform.Translate(-translationFactor * Time.deltaTime);
+                transform.Translate(-translationFactor * Time.deltaTime, Space.World);
             }        
 	}
 
