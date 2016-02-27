@@ -15,6 +15,7 @@ public class CameraMovement : MonoBehaviour
     private float max;
     private float newx;
     private float speed;
+    private float camSpeed;
     private float offset;
     private bool play;
     public float initOffset = -1.0f;
@@ -22,10 +23,7 @@ public class CameraMovement : MonoBehaviour
     public float slowOffset = 2.0f;
     public float upAndSlowestOffset = 4.0f;
     public float fastOffset = -2.0f;
-    //X offset is the offset for x when the pod moves to __ amount to one side of the camera. after __, camera starts to follow
-    //pod rather than letting it slide to the side of the camera.
-    public float xOffset = 15.0f;
-
+    private Vector3 lasPos;
 
 
     void Awake()
@@ -38,6 +36,7 @@ public class CameraMovement : MonoBehaviour
         min = -0.21f;
         max = 0.21f;
         offset = initOffset;
+        camSpeed = 1.0f;
         if (!startOfGame)
         {
             Vector3 temp = pod.transform.position;
@@ -45,8 +44,8 @@ public class CameraMovement : MonoBehaviour
             temp.x = transform.position.x;
             transform.position = temp;
         }
+        lasPos = transform.position;
     }
-    Vector3 lastPosition = Vector3.zero;
     void FixedUpdate()
     { 
         speed = pod.GetComponent<Rigidbody2D>().velocity.y * -1;
@@ -58,7 +57,9 @@ public class CameraMovement : MonoBehaviour
             if (startOfGame)
             {
                 dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed * Time.deltaTime);
+                lasPos = transform.position;
                 transform.position = new Vector3(transform.position.x, dest, transform.position.z);
+
             }
             else if (pod && play)
             {
@@ -95,15 +96,6 @@ public class CameraMovement : MonoBehaviour
                         {
                             offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
                         }
-                        /*newx = transform.position.x;
-                        if (pod.transform.position.x <= (transform.position.x - xOffset))
-                        {
-                            newx = pod.transform.position.x + xOffset;
-                        }
-                        else if (pod.transform.position.x >= (transform.position.x + xOffset))
-                        {
-                            newx = pod.transform.position.x - xOffset;
-                        }*/
 
                         dest = Mathf.Lerp(transform.position.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
                         transform.position = new Vector3(transform.position.x, dest + offset, transform.position.z);
