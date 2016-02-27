@@ -47,6 +47,9 @@ public class PodState : ObjectState
     {
         m_pod.FireThruster(false);
         m_pod.gameObject.SetActive(false);
+
+        // Summon explosion particle system
+
     }
 
     protected override void LoseState()

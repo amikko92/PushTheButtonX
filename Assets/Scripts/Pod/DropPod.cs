@@ -19,8 +19,8 @@ public class DropPod : MonoBehaviour
 
     [Space(10)]
 
-    [SerializeField, Range(0.0f, 1.0f)]
-    private float m_gravityScaleOffset = 0.5f;
+    [SerializeField]
+    private AnimationCurve m_gravityCurve;
 
     private bool m_shield = false;
     
@@ -58,6 +58,13 @@ public class DropPod : MonoBehaviour
 
     private GameObject shield;
 
+    // E-man
+    private GameObject dieExplosion;
+    private bool setToDestroy = false;
+
+    [SerializeField]
+    private GameObject podMesh;
+
     private void Awake() 
 	{
         m_transform = transform;
@@ -83,6 +90,18 @@ public class DropPod : MonoBehaviour
         {
             Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
         }
+
+        // Now find the explosion element
+        dieExplosion = GameObject.Find("Explosion");
+
+        if (dieExplosion)
+        {
+            dieExplosion.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("DopPod::Awake(), Hey buddy! Can't find your explosion guy!");
+        }
         // E-man - End
 
         // Set up raycast collision check
@@ -104,6 +123,18 @@ public class DropPod : MonoBehaviour
         m_objectState.UpdateState();
     }
 
+    private void Update()
+    {
+        if(setToDestroy)
+        {
+            if(!audioSources[4].isPlaying)
+            {
+                setToDestroy = false;
+                m_rigidbody2D.isKinematic = false;
+                GameManager.Instance.ChangeState(gameState.LOSE);                
+            }
+        }
+    }
 
     public float Altitude()
     {
@@ -267,8 +298,18 @@ public class DropPod : MonoBehaviour
 
     private void GameOver()
     {
-        // TODO: Explosions and game over event
-        GameManager.Instance.ChangeState(gameState.LOSE);
+        // E-man: Add explosion
+        dieExplosion.SetActive(true);
+        dieExplosion.transform.SetParent(null);
+
+        // Explosion sound
+        audioSources[4].Play();
+
+        setToDestroy = true;
+        podMesh.SetActive(false);
+
+        m_boxCollider2D.enabled = false;
+        m_rigidbody2D.isKinematic = true;
     }
 
     private void LevelComplete()
@@ -309,7 +350,7 @@ public class DropPod : MonoBehaviour
     private float CalculateGravityScale()
     {
         float altitude = Mathf.Min(Altitude(), m_startAltitude);
-        float gravityScale =  m_gravityScaleOffset + (1.0f - (altitude / m_startAltitude));
+        float gravityScale = m_gravityCurve.Evaluate(1.0f - (altitude / m_startAltitude));
         return gravityScale;
     }
 
