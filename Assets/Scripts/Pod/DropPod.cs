@@ -130,8 +130,8 @@ public class DropPod : MonoBehaviour
             if(!audioSources[4].isPlaying)
             {
                 setToDestroy = false;
-                GameManager.Instance.ChangeState(gameState.LOSE);
-                Debug.Log("FUCK YOU");
+                m_rigidbody2D.isKinematic = false;
+                GameManager.Instance.ChangeState(gameState.LOSE);                
             }
         }
     }
@@ -306,7 +306,10 @@ public class DropPod : MonoBehaviour
         audioSources[4].Play();
 
         setToDestroy = true;
-        podMesh.SetActive(false);        
+        podMesh.SetActive(false);
+
+        m_boxCollider2D.enabled = false;
+        m_rigidbody2D.isKinematic = true;
     }
 
     private void LevelComplete()
