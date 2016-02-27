@@ -9,7 +9,12 @@ public class DropHatch : MonoBehaviour
     private Vector2 m_ejectForce;
 
     // E-man
-    private GameObject motherShipExplosion; 
+    private GameObject motherShipExplosion;
+    private AudioSource as_explosion;
+    private bool setToDestroy = false;
+
+    [SerializeField]
+    private GameObject shipMesh;
 
     private Collider2D m_collider2D;
 
@@ -41,11 +46,24 @@ public class DropHatch : MonoBehaviour
 
         GameObject go = GameObject.Find("Pod");
         m_podRigidbody = go.GetComponent<Rigidbody2D>();
+
+        // E-man
+        as_explosion = GetComponent<AudioSource>();
     }
 	
 	private void Update() 
 	{
         m_objectState.UpdateState();
+
+        if(setToDestroy)
+        {
+            if(!as_explosion.isPlaying)
+            {
+                setToDestroy = false;
+                transform.root.gameObject.SetActive(false);
+                
+            }
+        }
 	}
 
     public void EjectPod()
@@ -62,7 +80,11 @@ public class DropHatch : MonoBehaviour
         // E-man: Add explosion        
         motherShipExplosion.SetActive(true);
         motherShipExplosion.transform.SetParent(null);
+                
+        as_explosion.Play();
+        setToDestroy = true;
 
-        transform.root.gameObject.SetActive(false);
+        shipMesh.SetActive(false);
+        // transform.root.gameObject.SetActive(false); 
     }
 }

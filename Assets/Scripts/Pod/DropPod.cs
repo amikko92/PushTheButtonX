@@ -60,6 +60,10 @@ public class DropPod : MonoBehaviour
 
     // E-man
     private GameObject dieExplosion;
+    private bool setToDestroy = false;
+
+    [SerializeField]
+    private GameObject podMesh;
 
     private void Awake() 
 	{
@@ -119,6 +123,18 @@ public class DropPod : MonoBehaviour
         m_objectState.UpdateState();
     }
 
+    private void Update()
+    {
+        if(setToDestroy)
+        {
+            if(!audioSources[4].isPlaying)
+            {
+                setToDestroy = false;
+                GameManager.Instance.ChangeState(gameState.LOSE);
+                Debug.Log("FUCK YOU");
+            }
+        }
+    }
 
     public float Altitude()
     {
@@ -286,8 +302,11 @@ public class DropPod : MonoBehaviour
         dieExplosion.SetActive(true);
         dieExplosion.transform.SetParent(null);
 
-        // TODO: Explosions and game over event
-        GameManager.Instance.ChangeState(gameState.LOSE);
+        // Explosion sound
+        audioSources[4].Play();
+
+        setToDestroy = true;
+        podMesh.SetActive(false);        
     }
 
     private void LevelComplete()
