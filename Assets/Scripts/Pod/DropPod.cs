@@ -298,6 +298,7 @@ public class DropPod : MonoBehaviour
     {
         if (m_shield)
         {
+            //Damla: This works fine for me, but I'm not used to using this and if there is a problem with anything, it's this line's fault!
             yield return new WaitForSeconds(2);
             RemoveShield();
             grade.GotHit();
