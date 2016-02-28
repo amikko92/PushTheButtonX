@@ -5,57 +5,52 @@ public class MovingPlatform : MonoBehaviour
 {
     [SerializeField]
     private float m_maxVelocity = 1.0f;
+
+    [SerializeField]
+    private float m_smooth = 1.0f;
     
     [SerializeField]
     private Transform m_target;
+
+    [SerializeField]
+    private LayerMask m_landableMask;
     
-    private ConstantForce2D m_constantForce;
+    private Rigidbody2D m_rigidbody2D;
 
     private Vector2 m_startPos;
     private Vector2 m_endPos;
     private Vector2 m_curTarget;
-    private float m_distSqrDivision;
 
-    private Vector2 m_direction;
+    Vector2 m_velocity;
 
     private float m_traveledDistSqr;
 
+    private OnPlatformBehaviour m_objOn;
+
+    private const float m_minDist = 0.01f;
+    
     private void Awake() 
 	{
         m_startPos = transform.position;
         m_endPos = m_target.position;
-
-        m_constantForce = GetComponent<ConstantForce2D>();
-
-        m_direction = m_endPos - m_startPos;
-        m_direction.Normalize();
-        m_distSqrDivision = 1.0f / Vector2.SqrMagnitude(m_direction);
         m_curTarget = m_endPos;
 
-        m_pod = null;
+        m_rigidbody2D = GetComponent<Rigidbody2D>();
+        m_velocity = Vector2.zero;
+        m_objOn = null;
 	}
 	
 	private void Update() 
 	{
-        Vector2 force = Vector2.zero;
-
-        float curDistSqr = Vector2.SqrMagnitude((Vector2)transform.position - m_curTarget);
-        float step = curDistSqr * m_distSqrDivision;
-
-        force += Vector2.Lerp(Vector2.zero, m_direction * m_maxVelocity, step);
-        force += Vector2.Lerp(-m_direction * m_maxVelocity, Vector2.zero, step);
-
-        //m_constantForce.force = force;
-        //GetComponent<Rigidbody2D>().MovePosition((Vector2)transform.position + Vector2.right * Time.deltaTime);
-        transform.Translate(Vector2.left * 4f * Time.deltaTime);
-
-        if(m_pod !=null)
+        transform.position = Vector2.SmoothDamp(transform.position, m_curTarget, ref m_velocity, m_smooth, m_maxVelocity, Time.deltaTime);
+        
+        if(m_objOn !=null)
         {
-            Debug.Log("Push");
-            m_pod.transform.Translate(Vector2.left * 4f * Time.deltaTime);
+            m_objOn.Translate(m_velocity * Time.deltaTime);
         }
 
-        if(step <= 0.1f)
+        float curDistSqr = Vector2.SqrMagnitude((Vector2)transform.position - m_curTarget);
+        if (curDistSqr <= m_minDist)
         {
             ChangeDirection();
         }
@@ -64,7 +59,6 @@ public class MovingPlatform : MonoBehaviour
     private void ChangeDirection()
     {
         m_curTarget = (m_curTarget == m_endPos) ? m_startPos : m_endPos;
-        m_direction *= -1.0f;
     }
 
     private void OnDrawGizmos()
@@ -72,26 +66,29 @@ public class MovingPlatform : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(m_target.position, 1.0f);
     }
-
-    private Rigidbody2D m_pod;
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        GameObject go = collision.gameObject;
-        if(go.CompareTag("Player"))
+        int mask = m_landableMask.value;
+        int layer = collision.gameObject.layer;
+        
+        if(BitMask.Contains(mask, layer))
         {
-            m_pod = go.GetComponent<Rigidbody2D>();
-            //go.transform.SetParent(transform);
+            GameObject go = collision.gameObject;
+            m_objOn = go.GetComponent<OnPlatformBehaviour>();
         }
     }
     
     private void OnCollisionExit2D(Collision2D collision)
     {
-        GameObject go = collision.gameObject;
-        if (go.CompareTag("Player"))
+        int mask = m_landableMask.value;
+        int layer = collision.gameObject.layer;
+
+        if (BitMask.Contains(mask, layer))
         {
-            m_pod.AddForce(Vector2.left * 4f * Time.deltaTime * GetComponent<Rigidbody2D>().mass);
-            m_pod = null;
-            //go.transform.SetParent(null);
+            Vector2 f = m_velocity * m_rigidbody2D.mass;
+            m_objOn.AddForce(f);
+            m_objOn = null;
         }
     }
 }
