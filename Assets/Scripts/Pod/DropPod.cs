@@ -65,6 +65,11 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private GameObject podMesh;
 
+    private GameObject grader;
+    private Grade grade;
+
+    private Vector3 StartPosition;
+
     private void Awake() 
 	{
         m_transform = transform;
@@ -78,6 +83,9 @@ public class DropPod : MonoBehaviour
 
         shield = GameObject.Find("Shield");
         shield.SetActive(false);
+
+        grader = GameObject.Find("Grading");
+        grade = grader.GetComponent<Grade>();
 
         // E-man - Begin
         thrusterFlame = GameObject.Find("ThrusterFlame");
@@ -114,6 +122,8 @@ public class DropPod : MonoBehaviour
         m_objectState = GetComponent<ObjectState>();
 
         m_meshTransform = m_transform.FindChild("Ship");
+
+        StartPosition = transform.position;
     }
     
 	private void FixedUpdate()
@@ -289,6 +299,7 @@ public class DropPod : MonoBehaviour
         if (m_shield)
         {
             RemoveShield();
+            grade.GotHit();
         }
         else
         {
@@ -358,9 +369,14 @@ public class DropPod : MonoBehaviour
     {
         if (buttonPressed && m_fuel > 0.0f)
         {
-            m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+            if(Altitude() <= StartPosition.y)
+            {
+                m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+            }
 
-            m_fuel -= m_fuelUsePerSecond * Time.deltaTime;
+            float used = m_fuelUsePerSecond * Time.deltaTime;
+            m_fuel -= used;
+            grade.FuelUsage(used);
 
             // Enable flame
             thrusterFlame.SetActive(true);
