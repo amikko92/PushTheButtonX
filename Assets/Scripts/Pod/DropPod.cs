@@ -60,6 +60,15 @@ public class DropPod : MonoBehaviour
 
     // E-man
     private GameObject dieExplosion;
+    private bool setToDestroy = false;
+
+    [SerializeField]
+    private GameObject podMesh;
+
+    private GameObject grader;
+    private Grade grade;
+
+    private Vector3 StartPosition;
 
     private void Awake() 
 	{
@@ -74,6 +83,9 @@ public class DropPod : MonoBehaviour
 
         shield = GameObject.Find("Shield");
         shield.SetActive(false);
+
+        grader = GameObject.Find("Grading");
+        grade = grader.GetComponent<Grade>();
 
         // E-man - Begin
         thrusterFlame = GameObject.Find("ThrusterFlame");
@@ -110,6 +122,8 @@ public class DropPod : MonoBehaviour
         m_objectState = GetComponent<ObjectState>();
 
         m_meshTransform = m_transform.FindChild("Ship");
+
+        StartPosition = transform.position;
     }
     
 	private void FixedUpdate()
@@ -119,6 +133,18 @@ public class DropPod : MonoBehaviour
         m_objectState.UpdateState();
     }
 
+    private void Update()
+    {
+        if(setToDestroy)
+        {
+            if(!audioSources[4].isPlaying)
+            {
+                setToDestroy = false;
+                m_rigidbody2D.isKinematic = false;
+                GameManager.Instance.ChangeState(gameState.LOSE);                
+            }
+        }
+    }
 
     public float Altitude()
     {
@@ -169,7 +195,7 @@ public class DropPod : MonoBehaviour
 
         if (string.Equals(layerName, "Enemy"))
         {
-            EnemyHit();
+            StartCoroutine(EnemyHit()); 
         }
 
         if(string.Equals(layerName, "Obstacle"))
@@ -268,11 +294,14 @@ public class DropPod : MonoBehaviour
         return fromAbove;
     }
     
-    public void EnemyHit()
+    public IEnumerator EnemyHit()
     {
         if (m_shield)
         {
+            //Damla: This works fine for me, but I'm not used to using this and if there is a problem with anything, it's this line's fault!
+            yield return new WaitForSeconds(2);
             RemoveShield();
+            grade.GotHit();
         }
         else
         {
@@ -286,8 +315,14 @@ public class DropPod : MonoBehaviour
         dieExplosion.SetActive(true);
         dieExplosion.transform.SetParent(null);
 
-        // TODO: Explosions and game over event
-        GameManager.Instance.ChangeState(gameState.LOSE);
+        // Explosion sound
+        audioSources[4].Play();
+
+        setToDestroy = true;
+        podMesh.SetActive(false);
+
+        m_boxCollider2D.enabled = false;
+        m_rigidbody2D.isKinematic = true;
     }
 
     private void LevelComplete()
@@ -336,9 +371,14 @@ public class DropPod : MonoBehaviour
     {
         if (buttonPressed && m_fuel > 0.0f)
         {
-            m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+            if(Altitude() <= StartPosition.y)
+            {
+                m_rigidbody2D.AddForce(m_thruster.ThrustForce());
+            }
 
-            m_fuel -= m_fuelUsePerSecond * Time.deltaTime;
+            float used = m_fuelUsePerSecond * Time.deltaTime;
+            m_fuel -= used;
+            grade.FuelUsage(used);
 
             // Enable flame
             thrusterFlame.SetActive(true);

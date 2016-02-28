@@ -59,5 +59,9 @@ public class PauseMenu : MonoBehaviour {
         Time.timeScale = 1;
         screen.SetActive(false);
     }
+    public void MainMenu()
+    {
+
+    }
 }
 

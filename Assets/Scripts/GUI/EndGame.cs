@@ -9,6 +9,12 @@ public class EndGame : ObjectState
     private GameObject lost;
     private GameObject win;
     private GameObject gui;
+    private GameObject grader;
+    private GameObject one;
+    private GameObject two;
+    private GameObject three;
+    private Grade grade;
+
     protected override void Awake()
     {
         base.Awake();
@@ -22,6 +28,14 @@ public class EndGame : ObjectState
         win = GameObject.Find("Won");
         win.SetActive(false);
         gui = GameObject.Find("Velocity_Element");
+        one = GameObject.Find("One Star");
+        two = GameObject.Find("Two Stars");
+        three = GameObject.Find("Three Stars");
+        one.SetActive(false);
+        two.SetActive(false);
+        three.SetActive(false);
+        grader = GameObject.Find("Grading");
+        grade = grader.GetComponent<Grade>();
     }
 
     protected override void StartState()
@@ -30,6 +44,7 @@ public class EndGame : ObjectState
 
     protected override void InitPlayState()
     {
+        grade.StartTime();
     }
 
     protected override void PlayState()
@@ -38,7 +53,22 @@ public class EndGame : ObjectState
 
     protected override void InitWinState()
     {
-        gui.SetActive(false);
+        grade.EndTime();
+        int star = grade.CalculateGrade();
+        if (star == 1)
+        {
+            one.SetActive(true);
+        }
+        else if (star == 2)
+        {
+            two.SetActive(true);
+        }
+        else
+        {
+            three.SetActive(true);
+        }
+        
+       gui.SetActive(false);
         win.SetActive(true);
     }
 
