@@ -17,7 +17,6 @@ public class CameraMovement : MonoBehaviour
     private float max;
     private float newx;
     private float speed;
-    private float camSpeed;
     private float offset;
     private bool play;
     public float initOffset = -1.0f;
@@ -25,7 +24,6 @@ public class CameraMovement : MonoBehaviour
     public float slowOffset = 2.0f;
     public float upAndSlowestOffset = 4.0f;
     public float fastOffset = -2.0f;
-    private Vector3 lasPos;
 
 
     void Awake()
@@ -38,7 +36,6 @@ public class CameraMovement : MonoBehaviour
         min = -0.21f;
         max = 0.21f;
         offset = initOffset;
-        camSpeed = 1.0f;
         if (!startOfGame)
         {
             Vector3 temp = pod.transform.position;
@@ -46,7 +43,6 @@ public class CameraMovement : MonoBehaviour
             temp.x = transform.position.x;
             transform.position = temp;
         }
-        lasPos = transform.position;
     }
     void FixedUpdate()
     { 
@@ -59,7 +55,6 @@ public class CameraMovement : MonoBehaviour
             if (startOfGame)
             {
                 dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed * Time.deltaTime);
-                lasPos = transform.position;
                 transform.position = new Vector3(transform.position.x, dest, transform.position.z);
 
             }
