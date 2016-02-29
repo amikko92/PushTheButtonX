@@ -25,6 +25,7 @@ public class PauseMenu : MonoBehaviour {
         Handler = GameObject.Find("Input Handler");
         Ihandler = Handler.GetComponent<InputHandler>();
     }
+    
 	
 	void Update ()
     {
