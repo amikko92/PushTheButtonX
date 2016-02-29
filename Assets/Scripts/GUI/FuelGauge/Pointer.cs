@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 
-public class FuelGauge : MonoBehaviour {
+public class Pointer : MonoBehaviour {
     
     private RectTransform img;
     private DropPod pod;
@@ -16,6 +14,8 @@ public class FuelGauge : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        img.transform.rotation = Quaternion.Euler(0, 0, pod.Fuel() * speed);
+        float value = ExtensionMethods.Remap(pod.Fuel(), 0, 100, 90, -90);    //Remove magic numbers...
+        Debug.Log(pod.Fuel());
+        img.transform.rotation = Quaternion.Euler(0, 0, value);
 	}
 }
