@@ -9,12 +9,14 @@ public class AsteroidBehaviour : MonoBehaviour {
     private Vector3 startPos;
 
     //TOFDO
-    //make this crap work
+    [SerializeField]
     private Vector3 rotation = new Vector3(0, 0 , -1);
+
+    private Vector3 translation;
 
     void OnEnable()
     {
-       startPos = transform.position;
+        startPos = transform.position;
     }
 
     // Update is called once per frame
@@ -26,12 +28,14 @@ public class AsteroidBehaviour : MonoBehaviour {
 
             if (startPos.x <= 0)
             {
-                transform.Translate(translationFactor * Time.deltaTime, Space.World);
+                translation = translationFactor * Time.deltaTime;
+                transform.Translate(translation, Space.World);
             }
 
             else
             {
-                transform.Translate(-translationFactor * Time.deltaTime, Space.World);
+                translation = -translationFactor * Time.deltaTime;
+                transform.Translate(translation, Space.World);
             }        
 	}
 
@@ -46,5 +50,10 @@ public class AsteroidBehaviour : MonoBehaviour {
         {
             gameObject.SetActive(false);
         }
+    }
+
+    public Vector3 GetTranslation()
+    {
+        return translation;
     }
 }

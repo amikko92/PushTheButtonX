@@ -28,27 +28,42 @@ public class MovingPlatform : MonoBehaviour
     private OnPlatformBehaviour m_objOn;
 
     private const float m_minDist = 0.01f;
+
+    private AsteroidBehaviour asteroidBh;
     
     private void Awake() 
 	{
-        m_startPos = transform.position;
-        m_endPos = m_target.position;
-        m_curTarget = m_endPos;
-
         m_rigidbody2D = GetComponent<Rigidbody2D>();
         m_velocity = Vector2.zero;
         m_objOn = null;
+
+        if (m_target == null)
+        {
+            asteroidBh = transform.root.GetComponent<AsteroidBehaviour>();
+            return;
+        }
+
+        m_startPos = transform.position;
+        m_endPos = m_target.position;
+        m_curTarget = m_endPos;
+        
 	}
 	
 	private void Update() 
 	{
-        transform.position = Vector2.SmoothDamp(transform.position, m_curTarget, ref m_velocity, m_smooth, m_maxVelocity, Time.deltaTime);
-        
-        if(m_objOn !=null)
+        if (m_objOn != null)
         {
-            m_objOn.Translate(m_velocity * Time.deltaTime);
+            if (asteroidBh == null)
+                m_objOn.Translate(m_velocity * Time.deltaTime);
+            else
+                m_objOn.Translate(asteroidBh.GetTranslation());
         }
 
+        if (m_target == null)
+            return;
+
+        transform.position = Vector2.SmoothDamp(transform.position, m_curTarget, ref m_velocity, m_smooth, m_maxVelocity, Time.deltaTime);
+        
         float curDistSqr = Vector2.SqrMagnitude((Vector2)transform.position - m_curTarget);
         if (curDistSqr <= m_minDist)
         {
@@ -59,12 +74,6 @@ public class MovingPlatform : MonoBehaviour
     private void ChangeDirection()
     {
         m_curTarget = (m_curTarget == m_endPos) ? m_startPos : m_endPos;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(m_target.position, 1.0f);
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
