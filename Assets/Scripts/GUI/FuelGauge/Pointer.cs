@@ -4,7 +4,6 @@ public class Pointer : MonoBehaviour {
     
     private RectTransform img;
     private DropPod pod;
-    private int speed = 30;
 
 	// Use this for initialization
 	void Start () {
