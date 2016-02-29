@@ -14,10 +14,7 @@ public class SpawnManager : MonoBehaviour {
 
     [SerializeField]
     private GameObject pod;
-
-    [SerializeField]
-    private GameObject[] spawnPoints;
-
+    
     /*
         Initializes a dictionary based on the ObjectPools and Types
         Note that is important that Element N matches in the serialize 
