@@ -14,7 +14,6 @@ public class Pointer : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         float value = ExtensionMethods.Remap(pod.Fuel(), 0, 100, 90, -90);    //Remove magic numbers...
-        Debug.Log(pod.Fuel());
         img.transform.rotation = Quaternion.Euler(0, 0, value);
 	}
 }
