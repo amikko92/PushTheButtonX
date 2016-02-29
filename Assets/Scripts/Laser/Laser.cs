@@ -17,10 +17,19 @@ public class Laser : ObjectState {
     private Transform m_pod;
 
     [SerializeField]
-    protected bool startActive;
+    private bool startActive;
 
     [SerializeField]
-    protected bool constant;
+    private bool constant;
+
+    [SerializeField]
+    private bool pulse;
+
+    [SerializeField]
+    private int pulseLength;
+
+    private float pulseTimer;
+    private bool toggle;
 
     private float _offset = 0, _acc = 0.02f, _speed = 0.0f;
     public int size, startPoint, endPoint;
@@ -28,6 +37,7 @@ public class Laser : ObjectState {
     Vector3 _position;
     LineRenderer m_beam;
     List<Vector3> vertexPositions;
+    BoxCollider2D m_beam_bc;
 
     bool shot;
 
@@ -40,6 +50,8 @@ public class Laser : ObjectState {
 
         m_laser.gameObject.SetActive(startActive);
         m_beam.gameObject.SetActive(false);
+
+        m_beam_bc = m_laser.GetComponent<BoxCollider2D>();
     }
 	
 	void Update () {
@@ -73,35 +85,21 @@ public class Laser : ObjectState {
 
     protected override void PlayState()
     {
+        bool shoot = false;
         timer += Time.deltaTime;
         if (m_laser.trackPlayer)
         {
-            if (timer < 2)
-            {
-                UpdateSpeed();
-                UpdatePosition();
-            }
-            else if (timer > 2 && timer < 2.5)
-            {
-
-            }
-
-            else
-            {
-                ShootBeam();
-            }
+            TrackPlayer(ref shoot);
         }
 
-        else if(constant)
+        else if (constant) shoot = true;
+        
+        if (pulse)
         {
-            ShootBeam();
+            PulseBeam(ref shoot);
         }
 
-        // TODO: create pulse function
-        else
-        {
-
-        }
+        if (shoot) ShootBeam();
 
     }
 
@@ -150,8 +148,7 @@ public class Laser : ObjectState {
 
     private void InitBeam()
     {
-        BoxCollider2D bc = m_laser.GetComponent<BoxCollider2D>();
-        bc.enabled = true;
+        m_beam_bc.enabled = true;
 
         shot = true;
         vertexPositions = new List<Vector3>();
@@ -183,4 +180,38 @@ public class Laser : ObjectState {
         UpdateBeam();
     }
 
+    private void TrackPlayer(ref bool shoot)
+    {
+        if (timer < 2)
+        {
+            UpdateSpeed();
+            UpdatePosition();
+        }
+        else if (timer > 2 && timer < 2.5)
+        {
+            // Implement charge laser transition
+        }
+
+        else
+        {
+            shoot = true;
+        }
+    }
+
+    private void PulseBeam(ref bool shoot)
+    {
+        pulseTimer += Time.deltaTime;
+
+        if (pulseTimer > pulseLength)
+        {
+            // NOTE: The order matters
+            toggle = !toggle;
+            m_beam.gameObject.SetActive(toggle);
+            m_beam_bc.enabled = toggle;
+            pulseTimer = 0;
+        }
+
+        if (toggle) shoot = true;
+    }
+    
 }
