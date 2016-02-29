@@ -28,8 +28,6 @@ public class HatchState : ObjectState
         // Add this when at top works
         if (!m_cam.AtTop()) return;
 
-        bool pressed = m_inputHandler.Pressed();
-
         if (m_inputHandler.Pressed())
         {
             m_hatch.EjectPod();

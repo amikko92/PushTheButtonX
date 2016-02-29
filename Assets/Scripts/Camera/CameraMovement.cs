@@ -17,7 +17,6 @@ public class CameraMovement : MonoBehaviour
     private float max;
     private float newx;
     private float speed;
-    private float camSpeed;
     private float offset;
     private bool play;
     public float initOffset = -1.0f;
@@ -25,7 +24,6 @@ public class CameraMovement : MonoBehaviour
     public float slowOffset = 2.0f;
     public float upAndSlowestOffset = 4.0f;
     public float fastOffset = -2.0f;
-    private Vector3 lasPos;
 
 
     void Awake()
@@ -38,7 +36,6 @@ public class CameraMovement : MonoBehaviour
         min = -0.21f;
         max = 0.21f;
         offset = initOffset;
-        camSpeed = 1.0f;
         if (!startOfGame)
         {
             Vector3 temp = pod.transform.position;
@@ -46,7 +43,6 @@ public class CameraMovement : MonoBehaviour
             temp.x = transform.position.x;
             transform.position = temp;
         }
-        lasPos = transform.position;
     }
     void FixedUpdate()
     { 
@@ -59,51 +55,50 @@ public class CameraMovement : MonoBehaviour
             if (startOfGame)
             {
                 dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed * Time.deltaTime);
-                lasPos = transform.position;
                 transform.position = new Vector3(transform.position.x, dest, transform.position.z);
 
             }
             else if (pod && play)
             {
-                if (transform.position.y <= (startPos.y + 0.1f))
+                if ((explosion))/*pod.speed >= fast) || explosion)*/
                 {
-                    if ((explosion))/*pod.speed >= fast) || explosion)*/
+                    newx = Mathf.PerlinNoise(transform.position.x * Time.time * min, transform.position.x * Time.time * max);
+                    dest = Mathf.PerlinNoise(transform.position.y * Time.time * min, transform.position.y * Time.time * max);
+                    dest = Mathf.Lerp(dest, pod.transform.position.y, smoothSpeed * Time.deltaTime);
+                    transform.position = new Vector3(newx, dest + offset, transform.position.z);
+                }
+                else
+                {
+                    if (speed < 6.0f)
                     {
-                        newx = Mathf.PerlinNoise(transform.position.x * Time.time * min, transform.position.x * Time.time * max);
-                        dest = Mathf.PerlinNoise(transform.position.y * Time.time * min, transform.position.y * Time.time * max);
-                        dest = Mathf.Lerp(dest, pod.transform.position.y, smoothSpeed * Time.deltaTime);
-                        transform.position = new Vector3(newx, dest + offset, transform.position.z);
-                    }
-                    else
-                    {
-                        if (speed < 6.0f)
+                        if (speed < 4.0f)
                         {
-                            if (speed < 4.0f)
+                            if (speed < 1.0f)
                             {
-                                if (speed < 1.0f)
-                                {
-                                    offset = Mathf.Lerp(offset, upAndSlowestOffset, Time.deltaTime);
-                                }
-                                else
-                                {
-                                    offset = Mathf.Lerp(offset, slowOffset, Time.deltaTime);
-                                }
+                                offset = Mathf.Lerp(offset, upAndSlowestOffset, Time.deltaTime);
                             }
                             else
                             {
-                                offset = Mathf.Lerp(offset, midSpeedOffset, Time.deltaTime);
+                                offset = Mathf.Lerp(offset, slowOffset, Time.deltaTime);
                             }
                         }
-                        else if (speed > 12.0f)
+                        else
                         {
-                            offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
+                            offset = Mathf.Lerp(offset, midSpeedOffset, Time.deltaTime);
                         }
-
-                        dest = Mathf.Lerp(transform.position.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
-                        transform.position = new Vector3(transform.position.x, dest + offset, transform.position.z);
-
                     }
+                    else if (speed > 12.0f)
+                    {
+                        offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
+                    }
+                    if(transform.position.y >= (startPos.y))
+                    {
+                        offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
+                    }
+                    dest = Mathf.Lerp(transform.position.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
+                    transform.position = new Vector3(transform.position.x, dest + offset, transform.position.z);
                 }
+                
             }
         }
     }

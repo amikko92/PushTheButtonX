@@ -30,7 +30,7 @@ public class SpawnOnStart : MonoBehaviour
 
     void Awake()
     { 
-        time = Time.time;
+        time = Time.time - spawnDelay;
     }
 
     // Update is called once per frame

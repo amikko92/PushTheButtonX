@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class EndGame : ObjectState
 {
 
-    Canvas canvas;
     private GameObject lost;
     private GameObject win;
     private GameObject gui;
@@ -22,7 +21,6 @@ public class EndGame : ObjectState
 
     protected override void InitStartState()
     {
-        canvas = GetComponent<Canvas>();
         lost = GameObject.Find("Lost");
         lost.SetActive(false);
         win = GameObject.Find("Won");

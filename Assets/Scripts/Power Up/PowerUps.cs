@@ -15,8 +15,8 @@ public class PowerUps : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D c)
     {
         GameObject other = c.gameObject;
-        sc = c.GetComponent<DropPod>();
-        if (c.tag.Equals("Player"))
+        sc = other.GetComponent<DropPod>();
+        if (other.tag.Equals("Player"))
         {
             Destroy(gameObject);
         }
