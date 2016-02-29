@@ -195,7 +195,7 @@ public class DropPod : MonoBehaviour
 
         if (string.Equals(layerName, "Enemy"))
         {
-            StartCoroutine(EnemyHit()); 
+            EnemyHit(); 
         }
 
         if(string.Equals(layerName, "Obstacle"))
@@ -294,7 +294,12 @@ public class DropPod : MonoBehaviour
         return fromAbove;
     }
     
-    public IEnumerator EnemyHit()
+    public void EnemyHit()
+    {
+        StartCoroutine(EnemyHitRoutine());
+    }
+
+    private IEnumerator EnemyHitRoutine()
     {
         if (m_shield)
         {
