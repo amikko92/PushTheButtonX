@@ -13,11 +13,9 @@ public class MainMenuScripts : MonoBehaviour {
     private DropPod dp;
     public GameObject main;
     public GameObject select;
-    Canvas canvas;
     // Use this for initialization
     void Awake ()
     {
-        canvas = GetComponent<Canvas>();
        // pod = GameObject.FindGameObjectWithTag("Player");
        // dp = pod.GetComponent <DropPod> ();
         main = GameObject.Find("Main Menu");

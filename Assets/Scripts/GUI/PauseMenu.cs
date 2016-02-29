@@ -10,7 +10,6 @@ public class PauseMenu : MonoBehaviour {
     public static bool paused;
     bool showControls;
     public GUISkin mySkin;
-    Canvas canvas;
     private GameObject screen;
     private GameObject gui;
     private GameObject Handler;
@@ -18,14 +17,12 @@ public class PauseMenu : MonoBehaviour {
 
     void Awake () {
         paused = false;
-        canvas = GetComponent<Canvas>();
         screen = GameObject.Find("GUIManager/Pause Screen/Layout");
         screen.SetActive(false);
         gui = GameObject.Find("GUIManager/Velocity_Element");
         Handler = GameObject.Find("Input Handler");
         Ihandler = Handler.GetComponent<InputHandler>();
     }
-    
 	
 	void Update ()
     {
