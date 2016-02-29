@@ -100,4 +100,12 @@ public class MovingPlatform : MonoBehaviour
             m_objOn = null;
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("RightBound") || collider.CompareTag("LeftBound"))
+        {
+            gameObject.SetActive(false);
+        }
+    }
 }

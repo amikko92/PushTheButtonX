@@ -46,7 +46,7 @@ public class AsteroidBehaviour : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.CompareTag("RightBound"))
+        if (collider.CompareTag("RightBound") || collider.CompareTag("LeftBound"))
         {
             gameObject.SetActive(false);
         }
