@@ -16,12 +16,14 @@ public class MainMenuScripts : MonoBehaviour {
     // Use this for initialization
     void Awake ()
     {
-       // pod = GameObject.FindGameObjectWithTag("Player");
-       // dp = pod.GetComponent <DropPod> ();
+        GameManager.Instance.ChangeState(gameState.START);
+        // pod = GameObject.FindGameObjectWithTag("Player");
+        // dp = pod.GetComponent <DropPod> ();
         main = GameObject.Find("Main Menu");
         select = GameObject.Find("Level Select");
         main.SetActive(true);
         select.SetActive(false);
+        GameManager.Instance.ChangeState(gameState.PLAY);
     }
 	
 	// Update is called once per frame
@@ -58,5 +60,10 @@ public class MainMenuScripts : MonoBehaviour {
     {
         GameManager.Instance.Nullify(true);
         SceneManager.LoadScene(level);
+    }
+    public void MainMenu()
+    {
+        GameManager.Instance.Nullify(true);
+        SceneManager.LoadScene("Menu");
     }
 }
