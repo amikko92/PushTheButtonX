@@ -51,6 +51,9 @@ public class MainMenuScripts : MonoBehaviour {
     public void MainMenu()
     {
         GameManager.Instance.Nullify(true);
-        SceneManager.LoadScene("Menu");
+
+        // Mikko: Never hard code scene loading. My quick fix is also bad
+        //SceneManager.LoadScene("Menu");  
+        SceneManager.LoadScene(0);
     }
 }

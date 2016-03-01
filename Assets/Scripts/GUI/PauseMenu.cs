@@ -14,6 +14,7 @@ public class PauseMenu : MonoBehaviour {
     private GameObject gui;
     private GameObject Handler;
     private InputHandler Ihandler;
+    private LevelManager levelManager;
 
     void Awake () {
         paused = false;
@@ -22,6 +23,7 @@ public class PauseMenu : MonoBehaviour {
         gui = GameObject.Find("GUIManager/Velocity_Element");
         Handler = GameObject.Find("Input Handler");
         Ihandler = Handler.GetComponent<InputHandler>();
+        levelManager = transform.root.GetComponent<LevelManager>();
     }
 	
 	void Update ()
@@ -32,15 +34,11 @@ public class PauseMenu : MonoBehaviour {
             paused = !paused;
             if (paused)
             {
-                Time.timeScale = 0;
-                screen.SetActive(true);
-                gui.SetActive(false);
+                Pause();
             }
             else
             {
-                Time.timeScale = 1;
-                screen.SetActive(false);
-                gui.SetActive(true);
+                ReturnGame();
             }
         }
     }
@@ -52,14 +50,25 @@ public class PauseMenu : MonoBehaviour {
                 Application.Quit();
         #endif
     }
+
+    public void Pause()
+    {
+        Time.timeScale = 0;
+        screen.SetActive(true);
+        //gui.SetActive(false); // Mikko: there is no reason to hide it. It also causes bugs
+    }
+
     public void ReturnGame()
     {
         Time.timeScale = 1;
         screen.SetActive(false);
+        //gui.SetActive(true); // Mikko: there is no reason to hide it. It also causes bugs
     }
+
     public void MainMenu()
     {
-
+        if(levelManager)
+            levelManager.LoadLevel(0);
     }
 }
 
