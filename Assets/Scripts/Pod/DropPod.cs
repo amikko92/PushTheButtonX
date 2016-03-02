@@ -303,6 +303,12 @@ public class DropPod : MonoBehaviour
     {
         if (m_shield)
         {
+            // E-man: Play hit sound
+            if (!audioSources[5].isPlaying)
+            {
+                audioSources[5].Play();
+            }
+
             //Damla: This works fine for me, but I'm not used to using this and if there is a problem with anything, it's this line's fault!
             yield return new WaitForSeconds(2);
             RemoveShield();
