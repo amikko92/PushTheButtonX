@@ -34,6 +34,7 @@ public class EndGame : ObjectState
         three.SetActive(false);
         grader = GameObject.Find("Grading");
         grade = grader.GetComponent<Grade>();
+        Time.timeScale = 1;
     }
 
     protected override void StartState()

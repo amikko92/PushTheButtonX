@@ -30,7 +30,6 @@ public class CameraState : ObjectState
 
     protected override void InitWinState()
     {
-
     }
 
     protected override void WinState()
@@ -40,7 +39,6 @@ public class CameraState : ObjectState
 
     protected override void InitLoseState()
     {
-
     }
 
     protected override void LoseState()
