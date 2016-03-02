@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
+using UnityEditorInternal;
+using System.Reflection;
+using CurveExtended;
 
 public class CameraMovement : MonoBehaviour
 {
     public AnimationCurve curve;
-
+    private Keyframe[] frames;
     private GameObject pod;
     private float smoothSpeed = 1000.0f;
     public bool startOfGame;
-    public float scrollSpeed = 0.2f;
     private Vector3 startPos;
     private float fast;
     private bool explosion;
@@ -19,12 +22,13 @@ public class CameraMovement : MonoBehaviour
     private float speed;
     private float offset;
     private bool play;
-    public float initOffset = -1.0f;
-    public float midSpeedOffset = 0.0f;
+    public float midSpeedOffset = -1.0f;
     public float slowOffset = 2.0f;
-    public float upAndSlowestOffset = 4.0f;
+    public float slowestOffset = 4.0f;
+    public float upOffset = 4.0f;
+    public float stillOffset = 4.0f;
     public float fastOffset = -2.0f;
-
+    public float scartScrollFPS = 0.5f;
 
     void Awake()
     {
@@ -35,14 +39,27 @@ public class CameraMovement : MonoBehaviour
         play = false;
         min = -0.21f;
         max = 0.21f;
-        offset = initOffset;
+        offset = midSpeedOffset;
         if (!startOfGame)
         {
-            Vector3 temp = pod.transform.position;
-            temp.z = transform.position.z;
-            temp.x = transform.position.x;
+            Vector3 temp = transform.position;
+            temp.y = startPos.y;
             transform.position = temp;
         }
+        else
+        {
+            float loc = 0;
+            int i;
+            curve.AddKey(KeyframeUtil.GetNew(0, transform.position.y, TangentMode.Linear));
+            for (i = 1; loc < startPos.y; i++)
+            {
+                curve.AddKey(KeyframeUtil.GetNew(i, loc, TangentMode.Linear));
+                loc += 10;
+            }
+            curve.AddKey(KeyframeUtil.GetNew(i, startPos.y, TangentMode.Linear));
+            curve.UpdateAllLinearTangents();
+        }
+        
     }
     void FixedUpdate()
     { 
@@ -54,9 +71,9 @@ public class CameraMovement : MonoBehaviour
         {
             if (startOfGame)
             {
-                dest = Mathf.Lerp(transform.position.y, startPos.y, scrollSpeed * Time.deltaTime);
-                transform.position = new Vector3(transform.position.x, dest, transform.position.z);
-
+                Vector3 local = transform.position;        
+                local.y = curve.Evaluate(Time.time);
+                transform.position = local;
             }
             else if (pod && play)
             {
@@ -75,7 +92,18 @@ public class CameraMovement : MonoBehaviour
                         {
                             if (speed < 1.0f)
                             {
-                                offset = Mathf.Lerp(offset, upAndSlowestOffset, Time.deltaTime);
+                                if( (speed < 0.1f) && (speed > -0.1f))
+                                {
+                                    offset = Mathf.Lerp(offset, stillOffset, Time.deltaTime);
+                                }
+                                else if(speed < -0.1f)
+                                {
+                                    offset = Mathf.Lerp(offset, upOffset, Time.deltaTime);
+                                }
+                                else
+                                {
+                                    offset = Mathf.Lerp(offset, slowestOffset, Time.deltaTime);
+                                }
                             }
                             else
                             {
