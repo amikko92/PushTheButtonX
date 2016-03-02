@@ -56,7 +56,8 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private float m_shakeFreq = 1.0f;
 
-    private GameObject shield;
+    [SerializeField]
+    private GameObject m_shieldObj;
 
     // E-man
     private GameObject dieExplosion;
@@ -80,9 +81,8 @@ public class DropPod : MonoBehaviour
         m_rayShooter2D = new RayShooter2D();
 
         m_startAltitude = Altitude();
-
-        shield = GameObject.Find("Shield");
-        shield.SetActive(false);
+        
+        m_shieldObj.SetActive(false);
 
         grader = GameObject.Find("Grading");
         grade = grader.GetComponent<Grade>();
@@ -346,7 +346,7 @@ public class DropPod : MonoBehaviour
 
         m_shield = false;
 
-        shield.SetActive(false);
+        m_shieldObj.SetActive(false);
     }
 
     private void AddShield()
@@ -357,7 +357,7 @@ public class DropPod : MonoBehaviour
 
         m_shield = true;
 
-        shield.SetActive(true); 
+        m_shieldObj.SetActive(true); 
     }
     
     public float GravityScale()
