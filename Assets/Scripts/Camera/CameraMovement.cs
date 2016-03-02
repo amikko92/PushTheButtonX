@@ -63,7 +63,7 @@ public class CameraMovement : MonoBehaviour
             for (index = 0; location < startPos.y; index++)
             {
                 curve.AddKey(KeyframeUtil.GetNew(Time.time + index, location, TangentMode.Linear));
-                location += scartScrollFPS;
+                location += scartScrollDistancePS;
             }
             curve.AddKey(KeyframeUtil.GetNew(Time.time + index, startPos.y, TangentMode.Linear));
             curve.UpdateAllLinearTangents();
