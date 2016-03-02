@@ -5,16 +5,15 @@ using UnityStandardAssets.ImageEffects;
 public class SpeedFeeback : MonoBehaviour {
 
     [SerializeField]
-    private DropPod pod;
-
-    [SerializeField]
     private float scale;
 
     private CameraMotionBlur motionBlur;
+    private DropPod pod;
 
-	// Use this for initialization
-	void Awake () {
+    // Use this for initialization
+    void Awake () {
         motionBlur = GetComponent<CameraMotionBlur>();
+        pod = (GameObject.FindGameObjectWithTag("Player")).GetComponent<DropPod>();
 
         // Make sure that the velocity starts at zero
         motionBlur.velocityScale = 0;

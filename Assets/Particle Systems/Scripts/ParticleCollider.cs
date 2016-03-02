@@ -21,13 +21,7 @@ public class ParticleCollider : MonoBehaviour {
 	void Update () {
 	
 	}
-
-    void OnTriggerEnter2D (Collider2D col)
-    {
-        //coroutine = CheckVelocity(col);
-        //StartCoroutine(coroutine);
-    }
-
+    
     void OnTriggerStay2D (Collider2D col)
     {
         string objLayerName = LayerMask.LayerToName(col.gameObject.layer);
@@ -39,38 +33,6 @@ public class ParticleCollider : MonoBehaviour {
                 renderer.material = destroyMTRL;
                 Fade();
                 pod.SendMessage("EnemyHit");
-            }
-        }
-    }
-
-    void OnTriggerExit2D (Collider2D col)
-    {
-        //StopCoroutine(coroutine);
-    }
-
-    IEnumerator CheckVelocity (Collider2D col)
-    {
-        while(true)
-        {
-            string objLayerName = LayerMask.LayerToName(col.gameObject.layer);
-            if (string.Equals(objLayerName, "Player"))
-            {
-<<<<<<< HEAD
-                var pod = col.GetComponent<DropPod>();
-                if (pod.Velocity() > 0)
-                {
-                    renderer.material = destroyMTRL;
-                    Fade();
-                    pod.SendMessage("EnemyHit");
-                    yield return false;
-                }
-                yield return null;
-=======
-                r.material = destroyMTRL;
-                Fade();
-                player.SendMessage("EnemyHit");
-                yield return false;
->>>>>>> 79877f746aa3f0380d095110086884366e0406b5
             }
         }
     }
