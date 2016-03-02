@@ -454,4 +454,9 @@ public class DropPod : MonoBehaviour
     {
         return m_maxLandingVelocity;
     }
+
+    public bool isThrusting()
+    {
+        return thrusterFlame.activeSelf;
+    }
 }

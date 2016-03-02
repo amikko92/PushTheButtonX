@@ -28,7 +28,7 @@ public class ParticleCollider : MonoBehaviour {
         if (string.Equals(objLayerName, "Player"))
         {
             var pod = col.GetComponent<DropPod>();
-            if (pod.Velocity() > 0)
+            if (pod.isThrusting())
             {
                 renderer.material = destroyMTRL;
                 Fade();
