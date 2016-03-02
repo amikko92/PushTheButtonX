@@ -312,6 +312,12 @@ public class DropPod : MonoBehaviour
     {
         if (m_shield)
         {
+            // E-man: Play hit sound
+            if (!audioSources[5].isPlaying)
+            {
+                audioSources[5].Play();
+            }
+
             float flickerTime = 0;
 
             while (flickerTime < 2.0f)
