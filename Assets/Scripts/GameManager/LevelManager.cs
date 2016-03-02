@@ -22,4 +22,17 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.Nullify(true);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    public void StartGame()
+    {
+        GameManager.Instance.Nullify(true);
+        SceneManager.LoadScene(1);
+    }
+    public void MainMenu()
+    {
+        GameManager.Instance.Nullify(true);
+
+        // Mikko: Never hard code scene loading. My quick fix is also bad
+        //SceneManager.LoadScene("Menu");  
+        SceneManager.LoadScene(0);
+    }
 }

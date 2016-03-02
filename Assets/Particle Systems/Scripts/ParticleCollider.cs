@@ -55,6 +55,7 @@ public class ParticleCollider : MonoBehaviour {
             string objLayerName = LayerMask.LayerToName(col.gameObject.layer);
             if (string.Equals(objLayerName, "Player"))
             {
+<<<<<<< HEAD
                 var pod = col.GetComponent<DropPod>();
                 if (pod.Velocity() > 0)
                 {
@@ -64,9 +65,14 @@ public class ParticleCollider : MonoBehaviour {
                     yield return false;
                 }
                 yield return null;
+=======
+                r.material = destroyMTRL;
+                Fade();
+                player.SendMessage("EnemyHit");
+                yield return false;
+>>>>>>> 79877f746aa3f0380d095110086884366e0406b5
             }
         }
-        
     }
 
     void Fade()

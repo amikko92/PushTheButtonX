@@ -33,6 +33,9 @@ public class DropPod : MonoBehaviour
     private RayShooter2D m_rayShooter2D;
 
     [SerializeField]
+    private MeshRenderer meshRenderer;
+
+    [SerializeField]
     private LayerMask m_groundMask;
     
     // Raycast members
@@ -124,6 +127,12 @@ public class DropPod : MonoBehaviour
         m_meshTransform = m_transform.FindChild("Ship");
 
         StartPosition = transform.position;
+        /*
+        meshRenderer = GameObject.Find("default").GetComponent<MeshRenderer>();
+        if (meshRenderer)
+        {
+            Debug.Log("Yo dude meshrenderer has been created");
+        }*/
     }
     
 	private void FixedUpdate()
@@ -303,8 +312,25 @@ public class DropPod : MonoBehaviour
     {
         if (m_shield)
         {
-            //Damla: This works fine for me, but I'm not used to using this and if there is a problem with anything, it's this line's fault!
-            yield return new WaitForSeconds(2);
+            // E-man: Play hit sound
+            if (!audioSources[5].isPlaying)
+            {
+                audioSources[5].Play();
+            }
+
+            float flickerTime = 0;
+
+            while (flickerTime < 2.0f)
+            {
+                meshRenderer.material.SetColor
+                    ("_Color", new Color(1.0f, 0.0f, 1.0f, 0.1f));
+                yield return new WaitForSeconds(0.25f);
+
+                meshRenderer.material.SetColor
+                    ("_Color", Color.white);
+                yield return new WaitForSeconds(0.25f);
+                flickerTime += 0.5f;
+            }
             RemoveShield();
             grade.GotHit();
         }
@@ -312,6 +338,7 @@ public class DropPod : MonoBehaviour
         {
             GameOver();
         }
+        yield return null;
     }
 
     private void GameOver()
@@ -342,7 +369,9 @@ public class DropPod : MonoBehaviour
     {
         // Have no shield. Do nothing
         if (!m_shield)
+        {
             return;
+        }
 
         m_shield = false;
 
