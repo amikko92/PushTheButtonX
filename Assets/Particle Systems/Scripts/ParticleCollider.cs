@@ -42,12 +42,11 @@ public class ParticleCollider : MonoBehaviour {
             {
                 r.material = destroyMTRL;
                 Fade();
-                player.SendMessage("KillMe");
+                player.SendMessage("EnemyHit");
                 yield return false;
             }
             yield return null;
         }
-        
     }
 
     void Fade()

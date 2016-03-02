@@ -25,7 +25,7 @@ public class EndGame : ObjectState
         lost.SetActive(false);
         win = GameObject.Find("Won");
         win.SetActive(false);
-        gui = GameObject.Find("Velocity_Element");
+        gui = GameObject.Find("HUD");
         one = GameObject.Find("One Star");
         two = GameObject.Find("Two Stars");
         three = GameObject.Find("Three Stars");
