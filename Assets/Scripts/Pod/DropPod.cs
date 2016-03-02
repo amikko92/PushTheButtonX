@@ -221,7 +221,7 @@ public class DropPod : MonoBehaviour
             //AddFuel(10.0f);
         }
     }
-    private bool LandVelocityCheck()
+    public bool LandVelocityCheck()
     {
         // If current vertical velocity is within the allowed landing velocity
         return (m_maxLandingVelocity > Mathf.Abs(m_rigidbody2D.velocity.y));
