@@ -28,7 +28,7 @@ public class CameraMovement : MonoBehaviour
     public float upOffset = 4.0f;
     public float stillOffset = 4.0f;
     public float fastOffset = -2.0f;
-    public float scartScrollFPS = 0.5f;
+    public float scartScrollFPS = 10.0f;
     public float fast = 12.0f;
     public float mid = 6.0f;
     public float slow = 4.0f;
