@@ -14,9 +14,14 @@ public class MovingPlatform : MonoBehaviour
 
     [SerializeField]
     private LayerMask m_landableMask;
-    
-    private Rigidbody2D m_rigidbody2D;
 
+    // Variabels to determine if force should be applied to the object on it
+    [SerializeField]
+    private float m_forceCoolDown = 0.2f;
+    private bool m_applyForce = true;
+
+    private Rigidbody2D m_rigidbody2D;
+    
     private Vector2 m_startPos;
     private Vector2 m_endPos;
     private Vector2 m_curTarget;
@@ -95,10 +100,26 @@ public class MovingPlatform : MonoBehaviour
 
         if (BitMask.Contains(mask, layer))
         {
-            Vector2 f = m_velocity * m_rigidbody2D.mass;
-            m_objOn.AddForce(f);
+            if (m_applyForce)
+            {
+                Vector2 f = m_velocity * m_rigidbody2D.mass;
+                m_objOn.AddForce(f);
+                StartCoroutine(ForceCoolDownRoutine());
+            }
             m_objOn = null;
         }
+    }
+    
+    private IEnumerator ForceCoolDownRoutine()
+    {
+        m_applyForce = false;
+        float t = 0.0f;
+        while(t < m_forceCoolDown)
+        {
+            t += Time.deltaTime;
+            yield return null;
+        }
+        m_applyForce = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collider)

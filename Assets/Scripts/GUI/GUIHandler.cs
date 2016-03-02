@@ -4,6 +4,9 @@ using System.Collections;
 public class GUIHandler : MonoBehaviour {
 
     private DropPod m_pod;
+    // to transorm the speed into something more Barry Allen!
+    internal int multiplier = 10;
+
     public DropPod pod
     {
         get { return m_pod; }

@@ -3,7 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class ImageSwitch : MonoBehaviour {
-    
+
+    public Texture active_danger;
     public Texture active;
     public Texture inactive;
     
@@ -19,8 +20,10 @@ public class ImageSwitch : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
-        if (up && pod.Velocity() > 0 || !up && pod.Velocity() < 0) img.texture = active;
+	void Update ()
+    {
+        if (!pod.LandVelocityCheck() && (up && pod.Velocity() > 0 || !up && pod.Velocity() < 0)) img.texture = active_danger;
+        else if (up && pod.Velocity() > 0 || !up && pod.Velocity() < 0) img.texture = active;
         else img.texture = inactive;
 	}
 }
