@@ -449,4 +449,9 @@ public class DropPod : MonoBehaviour
             }
         }       
     }
+
+    public float GetMaxLandingVelocity()
+    {
+        return m_maxLandingVelocity;
+    }
 }
