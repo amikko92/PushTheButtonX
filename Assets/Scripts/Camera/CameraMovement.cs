@@ -13,7 +13,6 @@ public class CameraMovement : MonoBehaviour
     private float smoothSpeed = 1000.0f;
     public bool startOfGame;
     private Vector3 startPos;
-    private float fast;
     private bool explosion;
     private float dest;
     private float min;
@@ -29,12 +28,16 @@ public class CameraMovement : MonoBehaviour
     public float stillOffset = 4.0f;
     public float fastOffset = -2.0f;
     public float scartScrollFPS = 0.5f;
+    public float fast = 12.0f;
+    public float mid = 6.0f;
+    public float slow = 4.0f;
+    public float slowest = 1.0f;
+   
 
     void Awake()
     {
         pod = GameObject.FindGameObjectWithTag("Player");
         startPos = pod.transform.position;
-        //fast = set maxSpeed;
         explosion = false;
         play = false;
         min = -0.21f;
@@ -77,7 +80,7 @@ public class CameraMovement : MonoBehaviour
             }
             else if (pod && play)
             {
-                if ((explosion))/*pod.speed >= fast) || explosion)*/
+                if ((explosion))
                 {
                     newx = Mathf.PerlinNoise(transform.position.x * Time.time * min, transform.position.x * Time.time * max);
                     dest = Mathf.PerlinNoise(transform.position.y * Time.time * min, transform.position.y * Time.time * max);
@@ -86,11 +89,11 @@ public class CameraMovement : MonoBehaviour
                 }
                 else
                 {
-                    if (speed < 6.0f)
+                    if (speed < mid)
                     {
-                        if (speed < 4.0f)
+                        if (speed < slow)
                         {
-                            if (speed < 1.0f)
+                            if (speed < slowest)
                             {
                                 if( (speed < 0.1f) && (speed > -0.1f))
                                 {
@@ -115,7 +118,7 @@ public class CameraMovement : MonoBehaviour
                             offset = Mathf.Lerp(offset, midSpeedOffset, Time.deltaTime);
                         }
                     }
-                    else if (speed > 12.0f)
+                    else if (speed > fast)
                     {
                         offset = Mathf.Lerp(offset, fastOffset, Time.deltaTime);
                     }
