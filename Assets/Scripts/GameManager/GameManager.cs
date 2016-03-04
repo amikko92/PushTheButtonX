@@ -25,7 +25,8 @@ public class GameManager : MonoBehaviour {
                 _instance = singleton.AddComponent<GameManager>();
                 singleton.name = "(singleton) " + typeof(GameManager).ToString();
 
-                DontDestroyOnLoad(singleton);
+                //Destroy it on load. Causes memory leaks otherwise since the instance is nullified
+                //DontDestroyOnLoad(singleton);
 
                 Debug.Log("[Singleton] An instandce of "
                     + typeof(GameManager) + " is needed in the scene, so '"

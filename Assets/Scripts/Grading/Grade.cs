@@ -8,16 +8,22 @@ public class Grade : MonoBehaviour {
     private float fuelUse;
     public float hitPrice;
     public float fuelPrice;
+    public float timePrice;
     private float start;
     private float end;
+    private GameObject pod;
+    private float startHeight;
 
     private void Awake()
     {
         hitNumber = 0;
         fuelUse = 0;
-        startNo = 100;
-        hitPrice = 10;
-        fuelPrice = 1;
+        hitPrice = 50;
+        fuelPrice = 15;
+        timePrice = 2;
+        pod = GameObject.FindGameObjectWithTag("Player");
+        startHeight = pod.transform.position.y;
+        startNo = startHeight * 10;
     }
     public void GotHit()
     {
@@ -40,12 +46,16 @@ public class Grade : MonoBehaviour {
 
     public int CalculateGrade()
     {
-        float grade = startNo - (hitNumber * hitPrice) - (fuelUse * fuelPrice) - (end - start);
-        if(grade < 30)
+        float grade = startNo - (hitNumber * hitPrice) - (fuelUse * fuelPrice) - ((end - start) * timePrice);
+        if (grade < (startHeight * 8 * 0.3))
+        {
+            return 0;
+        }
+        else if (grade < (startHeight * 8 * 0.5))
         {
             return 1;
         }
-        else if (grade < 60)
+        else if (grade < (startHeight * 8 * 0.8))
         {
             return 2;
         }

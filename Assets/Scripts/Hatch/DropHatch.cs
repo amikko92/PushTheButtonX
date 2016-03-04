@@ -22,6 +22,10 @@ public class DropHatch : MonoBehaviour
     private GameObject Handler;
     private InputHandler Ihandler;
 
+    // E-man
+    [SerializeField]
+    private GameObject fire;
+
     private void Awake() 
 	{
         m_collider2D = GetComponent<Collider2D>();
@@ -49,6 +53,11 @@ public class DropHatch : MonoBehaviour
 
         // E-man
         as_explosion = GetComponent<AudioSource>();
+        
+        if(!fire)
+        {
+            Debug.Log("DopHatch::Awake(), Hey buddy! Can't seem to find your fire fwiend!");
+        }
     }
 	
 	private void Update() 
@@ -80,6 +89,8 @@ public class DropHatch : MonoBehaviour
         // E-man: Add explosion        
         motherShipExplosion.SetActive(true);
         motherShipExplosion.transform.SetParent(null);
+
+        fire.SetActive(false);
                 
         as_explosion.Play();
         setToDestroy = true;

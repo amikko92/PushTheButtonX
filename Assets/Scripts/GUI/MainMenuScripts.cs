@@ -29,31 +29,15 @@ public class MainMenuScripts : MonoBehaviour {
                         Application.Quit();
         #endif
     }
-
-    public void StartGame()
-    {
-        GameManager.Instance.Nullify(true);
-        SceneManager.LoadScene(1);
-    }
-
     public void LevelSelect()
     {
         main.SetActive(false);
         select.SetActive(true);
     }
-
-    public void LoadLevel(int level)
-    {
-        GameManager.Instance.Nullify(true);
-        SceneManager.LoadScene(level);
-    }
-
     public void MainMenu()
     {
-        GameManager.Instance.Nullify(true);
-
-        // Mikko: Never hard code scene loading. My quick fix is also bad
-        //SceneManager.LoadScene("Menu");  
-        SceneManager.LoadScene(0);
+        select.SetActive(false);
+        main.SetActive(true);
     }
+
 }
