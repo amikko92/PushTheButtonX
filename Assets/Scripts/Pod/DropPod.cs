@@ -1,43 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DropPod : MonoBehaviour
+public class DropPod : MonoBehaviour 
 {
     [SerializeField]
     private Thruster m_thruster;
+
+    [SerializeField]
+    private GameObject shieldShatterParticle;
 
     [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
     [SerializeField, Range(0.0f, m_maxFuel)]
     private float m_fuel = m_maxFuel;
-
+    
     [SerializeField, Range(0.0f, m_maxFuel)]
     private float m_fuelUsePerSecond = 1.0f;
 
     public const float m_maxFuel = 100.0f;
-
-    // E-man Audio bullcrap
-    [SerializeField]
-    private AudioSource audioLanding;
-
-    [SerializeField]
-    private AudioSource audioFlame;
-
-    [SerializeField]
-    private AudioSource audioFireShoot;
-
-    [SerializeField]
-    private AudioSource audioThrustStart;
-
-    [SerializeField]
-    private AudioSource audioThrustEnd;
-
-    [SerializeField]
-    private AudioSource audioExplosion;
-
-    [SerializeField]
-    private AudioSource audioHit;
 
     [Space(10)]
 
@@ -83,6 +64,9 @@ public class DropPod : MonoBehaviour
 
     [SerializeField]
     private GameObject m_shieldObj;
+
+    [SerializeField]
+    private float ShieldFlickerFrequency;
 
     // E-man
     private GameObject dieExplosion;
@@ -170,7 +154,7 @@ public class DropPod : MonoBehaviour
     {
         if(setToDestroy)
         {
-            if(!audioExplosion.isPlaying)
+            if(!audioSources[4].isPlaying)
             {
                 setToDestroy = false;
                 m_rigidbody2D.isKinematic = false;
@@ -209,10 +193,6 @@ public class DropPod : MonoBehaviour
             bool landed = LandingSequence(collision);
             if(landed)
             {
-                // E-man: Sorry for hardcode, didn't want to create a new audio file
-                audioLanding.time = 2;
-                audioLanding.Play();
-
                 LevelComplete();
             }
             else
@@ -341,25 +321,25 @@ public class DropPod : MonoBehaviour
         if (m_shield)
         {
             // E-man: Play hit sound
-            if (!audioHit.isPlaying)
+            if (!audioSources[5].isPlaying)
             {
-                audioHit.Play();
+                audioSources[5].Play();
             }
 
             float flickerTime = 0;
-            
-            while (flickerTime < 2.0f)
-            {
-                meshRenderer.material.SetColor
-                    ("_Color", new Color(1.0f, 0.0f, 1.0f, 0.1f));
-                yield return new WaitForSeconds(0.25f);
-
-                meshRenderer.material.SetColor
-                    ("_Color", Color.white);
-                yield return new WaitForSeconds(0.25f);
-                flickerTime += 0.5f;
-            }
             RemoveShield();
+            shieldShatterParticle.SetActive(true);
+            while (flickerTime < 2.0f)
+            { 
+                meshRenderer.material.SetColor
+                    ("_Color", new Color(0.74f, 0.74f, 0.74f, 0.1f));
+                yield return new WaitForSeconds(ShieldFlickerFrequency);
+
+                meshRenderer.material.SetColor 
+                    ("_Color", Color.white);
+                yield return new WaitForSeconds(ShieldFlickerFrequency);
+                flickerTime += 2 * ShieldFlickerFrequency;
+            }
             grade.GotHit();
         }
         else
@@ -376,7 +356,7 @@ public class DropPod : MonoBehaviour
         dieExplosion.transform.SetParent(null);
 
         // Explosion sound
-        audioExplosion.Play();
+        audioSources[4].Play();
 
         setToDestroy = true;
         podMesh.SetActive(false);
@@ -450,11 +430,11 @@ public class DropPod : MonoBehaviour
             meshPos.x = meshPos.x + (m_shakeAmp * Mathf.Sin(m_shakeFreq * Time.time)) * GravityScale();
             m_meshTransform.position = meshPos;
 
-            if (!audioFlame.isPlaying && !audioFireShoot.isPlaying)
+            if (!audioSources[0].isPlaying && !audioSources[1].isPlaying /*&& !audioSources[2].isPlaying*/)
             {
-                audioFlame.Play();
-                audioFireShoot.Play();
-                audioThrustStart.Play();
+                audioSources[0].Play();
+                audioSources[1].Play();
+                audioSources[2].Play();
             }
         }
         else
@@ -467,13 +447,13 @@ public class DropPod : MonoBehaviour
             meshPos.x = transform.position.x;
             m_meshTransform.position = meshPos;
 
-            if (audioFlame.isPlaying || audioFireShoot.isPlaying)
+            if (audioSources[0].isPlaying || audioSources[1].isPlaying)
             {
-                audioThrustEnd.time = 0.2f;
-                audioThrustEnd.Play();
-                audioFlame.Stop();
-                audioFireShoot.Stop();
-                audioThrustStart.Stop();
+                audioSources[3].time = 0.2f;
+                audioSources[3].Play();
+                audioSources[0].Stop();
+                audioSources[1].Stop();
+                audioSources[2].Stop();
             }
         }       
     }
