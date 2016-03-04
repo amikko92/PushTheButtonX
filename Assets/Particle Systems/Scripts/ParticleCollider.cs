@@ -10,11 +10,14 @@ public class ParticleCollider : MonoBehaviour {
     private Renderer renderer;
     private IEnumerator coroutine;
 
+    private Collider2D collider2D;
+
 	// Use this for initialization
 	void Awake () {
         ps = GetComponent<ParticleSystem>();
         renderer = GetComponent<Renderer>();
         renderer.material = aliveMTRL;
+        collider2D = GetComponent<Collider2D>();
     }
 	
 	// Update is called once per frame
@@ -33,6 +36,7 @@ public class ParticleCollider : MonoBehaviour {
                 renderer.material = destroyMTRL;
                 Fade();
                 pod.SendMessage("EnemyHit");
+                collider2D.enabled = false;
             }
         }
     }
