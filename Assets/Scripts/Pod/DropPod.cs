@@ -7,6 +7,9 @@ public class DropPod : MonoBehaviour
     private Thruster m_thruster;
 
     [SerializeField]
+    private GameObject shieldShatterParticle;
+
+    [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
     [SerializeField, Range(0.0f, m_maxFuel)]
@@ -61,6 +64,9 @@ public class DropPod : MonoBehaviour
 
     [SerializeField]
     private GameObject m_shieldObj;
+
+    [SerializeField]
+    private float ShieldFlickerFrequency;
 
     // E-man
     private GameObject dieExplosion;
@@ -319,19 +325,19 @@ public class DropPod : MonoBehaviour
             }
 
             float flickerTime = 0;
-
-            while (flickerTime < 2.0f)
-            {
-                meshRenderer.material.SetColor
-                    ("_Color", new Color(1.0f, 0.0f, 1.0f, 0.1f));
-                yield return new WaitForSeconds(0.25f);
-
-                meshRenderer.material.SetColor
-                    ("_Color", Color.white);
-                yield return new WaitForSeconds(0.25f);
-                flickerTime += 0.5f;
-            }
             RemoveShield();
+            shieldShatterParticle.SetActive(true);
+            while (flickerTime < 2.0f)
+            { 
+                meshRenderer.material.SetColor
+                    ("_Color", new Color(0.74f, 0.74f, 0.74f, 0.1f));
+                yield return new WaitForSeconds(ShieldFlickerFrequency);
+
+                meshRenderer.material.SetColor 
+                    ("_Color", Color.white);
+                yield return new WaitForSeconds(ShieldFlickerFrequency);
+                flickerTime += 2 * ShieldFlickerFrequency;
+            }
             grade.GotHit();
         }
         else
