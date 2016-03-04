@@ -12,6 +12,7 @@ public class EndGame : ObjectState
     private GameObject one;
     private GameObject two;
     private GameObject three;
+    private GameObject zero;
     private Grade grade;
 
     protected override void Awake()
@@ -26,9 +27,11 @@ public class EndGame : ObjectState
         win = GameObject.Find("Won");
         win.SetActive(false);
         gui = GameObject.Find("HUD");
+        zero = GameObject.Find("No Star");
         one = GameObject.Find("One Star");
         two = GameObject.Find("Two Stars");
         three = GameObject.Find("Three Stars");
+        zero.SetActive(false);
         one.SetActive(false);
         two.SetActive(false);
         three.SetActive(false);
@@ -54,20 +57,22 @@ public class EndGame : ObjectState
     {
         grade.EndTime();
         int star = grade.CalculateGrade();
-        if (star == 1)
+        switch(star)
         {
-            one.SetActive(true);
+            case 0:
+                zero.SetActive(true);
+                break;
+            case 1:
+                one.SetActive(true);
+                break;
+            case 2:
+                two.SetActive(true);
+                break;
+            case 3:
+                three.SetActive(true);
+                break;
         }
-        else if (star == 2)
-        {
-            two.SetActive(true);
-        }
-        else
-        {
-            three.SetActive(true);
-        }
-        
-       gui.SetActive(false);
+        gui.SetActive(false);
         win.SetActive(true);
     }
 

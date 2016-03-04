@@ -74,6 +74,8 @@ public class DropPod : MonoBehaviour
 
     private Vector3 StartPosition;
 
+    private float fuelIncrease = 10.0f;
+
     private void Awake() 
 	{
         m_transform = transform;
@@ -227,7 +229,7 @@ public class DropPod : MonoBehaviour
         }
         if (string.Equals(layerName, "FuelUp"))
         {
-            //AddFuel(10.0f);
+            AddFuel(fuelIncrease);
         }
     }
     public bool LandVelocityCheck()

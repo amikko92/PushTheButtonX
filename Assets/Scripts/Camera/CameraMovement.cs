@@ -25,6 +25,7 @@ public class CameraMovement : MonoBehaviour
     public float midSpeedOffset = -0.0f;
     public float slowOffset = 2.0f;
     public float slowestOffset = 4.0f;
+    public float upSlowOffset = 2.0f;
     public float upOffset = 4.0f;
     public float stillOffset = 4.0f;
     public float fastOffset = -2.0f;
@@ -73,6 +74,7 @@ public class CameraMovement : MonoBehaviour
     void FixedUpdate()
     { 
         speed = pod.GetComponent<Rigidbody2D>().velocity.y * -1;
+        offset = CalculateOffset();
     }
     void LateUpdate()
     {
@@ -96,53 +98,65 @@ public class CameraMovement : MonoBehaviour
                 }
                 else
                 {
-                    if (speed < mid)
-                    {
-                        if (speed < slow)
-                        {
-                            if (speed < slowest)
-                            {
-                                if( (speed < 0.1f) && (speed > -0.1f))
-                                {
-                                    offset = Mathf.Lerp(offset, stillOffset, offsetChangeSpeed * Time.deltaTime);
-                                }
-                                else if(speed < -0.1f)
-                                {
-                                    offset = Mathf.Lerp(offset, upOffset, offsetChangeSpeed * Time.deltaTime);
-                                }
-                                else
-                                {
-                                    offset = Mathf.Lerp(offset, slowestOffset, offsetChangeSpeed * Time.deltaTime);
-                                }
-                            }
-                            else
-                            {
-                                offset = Mathf.Lerp(offset, slowOffset, offsetChangeSpeed * Time.deltaTime);
-                            }
-                        }
-                        else
-                        {
-                            offset = Mathf.Lerp(offset, midSpeedOffset, offsetChangeSpeed * Time.deltaTime);
-                        }
-                    }
-                    else if (speed > fast)
-                    {
-                        offset = Mathf.Lerp(offset, fastOffset, offsetChangeSpeed * Time.deltaTime);
-                    }
-                    else
-                    {
-                        offset = initOffset;
-                    }
-                    if(transform.position.y >= (startPos.y))
-                    {
-                        offset = Mathf.Lerp(offset, fastOffset, offsetChangeSpeed * Time.deltaTime);
-                    }
                     dest = Mathf.Lerp(transform.position.y, pod.transform.position.y, smoothSpeed * Time.deltaTime);
                     transform.position = new Vector3(transform.position.x, dest + offset, transform.position.z);
                 }
                 
             }
         }
+    }
+    private float CalculateOffset()
+    {
+        float os;
+        if (speed < mid)
+        {
+            if (speed < slow)
+            {
+                if (speed < slowest)
+                {
+                    if ((speed < 0.1f) && (speed > -0.1f))
+                    {
+                        os = Mathf.Lerp(offset, stillOffset, offsetChangeSpeed * Time.deltaTime);
+                    }
+                    else if (speed < -0.1f)
+                    {
+                        if (speed < (-1 * slowest))
+                        {
+                            os = Mathf.Lerp(offset, upSlowOffset, offsetChangeSpeed * Time.deltaTime);
+                        }
+                        else
+                        {
+                            os = Mathf.Lerp(offset, upOffset, offsetChangeSpeed * Time.deltaTime);
+                        }
+                    }
+                    else
+                    {
+                        os = Mathf.Lerp(offset, slowestOffset, offsetChangeSpeed * Time.deltaTime);
+                    }
+                }
+                else
+                {
+                    os = Mathf.Lerp(offset, slowOffset, offsetChangeSpeed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                os = Mathf.Lerp(offset, midSpeedOffset, offsetChangeSpeed * Time.deltaTime);
+            }
+        }
+        else if (speed > fast)
+        {
+            os = Mathf.Lerp(offset, fastOffset, offsetChangeSpeed * Time.deltaTime);
+        }
+        else
+        {
+            os = Mathf.Lerp(offset, initOffset, offsetChangeSpeed * Time.deltaTime);
+        }
+        if (transform.position.y >= (startPos.y))
+        {
+            os = Mathf.Lerp(offset, fastOffset, offsetChangeSpeed * Time.deltaTime);
+        }
+        return os;
     }
     public bool AtTop()
     {
