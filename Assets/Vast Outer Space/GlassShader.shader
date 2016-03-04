@@ -7,7 +7,7 @@
 		// Specular
 		_SpecularMap("Specular / Reflection Map", 2D) = "white" {}
 	// Rim
-	//_RimColour ("Rim Colour", Color) = (0.26,0.19,0.16,0.0)
+	_RimColour ("Rim Colour", Color) = (0.26,0.19,0.16,1.0)
 	}
 		SubShader{
 		// This will be a transparent material
@@ -55,8 +55,8 @@
 		//Rim
 		// Rim lighting is emissive lighting based on angle between surface normal and view direction.
 		// You get more reflection at glancing angles
-		//half intensity = 1.0 - saturate(dot (normalize(IN.viewDir), o.Normal));
-		//o.Emission += intensity * _RimColour.rgb;
+		half intensity = 1.0 - saturate(dot (normalize(IN.viewDir), o.Normal));
+		o.Emission += intensity * _RimColour.rgb;
 	}
 	ENDCG
 	}
