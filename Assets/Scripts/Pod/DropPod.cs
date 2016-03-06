@@ -42,6 +42,12 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private AudioSource audioLanding;
 
+    [SerializeField]
+    private AudioSource audioFalling;
+
+    [SerializeField]
+    private float rattlingThreshold = -15;
+
     [Space(10)]
 
     [SerializeField]
@@ -162,7 +168,7 @@ public class DropPod : MonoBehaviour
         if (meshRenderer)
         {
             Debug.Log("Yo dude meshrenderer has been created");
-        }*/
+        }*/        
     }
     
 	private void FixedUpdate()
@@ -183,6 +189,9 @@ public class DropPod : MonoBehaviour
                 GameManager.Instance.ChangeState(gameState.LOSE);                
             }
         }
+
+        // E-man
+        checkForFallingNoise();
     }
 
     public float Altitude()
@@ -453,7 +462,7 @@ public class DropPod : MonoBehaviour
             // Shake mesh
             Vector3 meshPos = m_meshTransform.position;
             meshPos.x = meshPos.x + (m_shakeAmp * Mathf.Sin(m_shakeFreq * Time.time)) * GravityScale();
-            m_meshTransform.position = meshPos;
+            m_meshTransform.position = meshPos;            
 
             if (!audioFlame.isPlaying && !audioFireShoot.isPlaying /*&& !audioThrustStart.isPlaying*/)
             {
@@ -491,5 +500,21 @@ public class DropPod : MonoBehaviour
     public bool isThrusting()
     {
         return thrusterFlame.activeSelf;
+    }
+
+    // E-man
+    private void checkForFallingNoise()
+    {
+        if(Velocity() <= rattlingThreshold)
+        {
+            if (!audioFalling.isPlaying)
+            {                
+                audioFalling.Play();                
+            }
+        }
+        else
+        {
+            audioFalling.Stop();
+        }
     }
 }
