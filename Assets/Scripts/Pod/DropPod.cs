@@ -48,6 +48,9 @@ public class DropPod : MonoBehaviour
     [SerializeField]
     private float rattlingThreshold = -15;
 
+    private AudioSource[] allAudioSources;
+    private bool isPaused;
+
     [Space(10)]
 
     [SerializeField]
@@ -163,7 +166,10 @@ public class DropPod : MonoBehaviour
         if (meshRenderer)
         {
             Debug.Log("Yo dude meshrenderer has been created");
-        }*/        
+        }*/
+
+        allAudioSources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
+        isPaused = false;
     }
     
 	private void FixedUpdate()
@@ -184,9 +190,10 @@ public class DropPod : MonoBehaviour
                 GameManager.Instance.ChangeState(gameState.LOSE);                
             }
         }
-
+               
         // E-man
         checkForFallingNoise();
+        checkForPause();
     }
 
     public float Altitude()
@@ -508,6 +515,28 @@ public class DropPod : MonoBehaviour
         else
         {
             audioFalling.Stop();
+        }
+    }
+
+    private void checkForPause()
+    {
+        if (PauseMenu.paused)
+        {
+            isPaused = true;            
+
+            foreach (AudioSource audioSource in allAudioSources)
+            {
+                audioSource.Pause();
+            }
+        }
+        else if(!PauseMenu.paused && isPaused)
+        {
+            isPaused = false;
+
+            foreach (AudioSource audioSource in allAudioSources)
+            {
+                audioSource.UnPause();
+            }
         }
     }
 }
