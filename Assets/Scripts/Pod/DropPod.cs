@@ -7,9 +7,6 @@ public class DropPod : MonoBehaviour
     private Thruster m_thruster;
 
     [SerializeField]
-    private GameObject shieldShatterParticle;
-
-    [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
     [SerializeField, Range(0.0f, m_maxFuel)]
@@ -19,6 +16,9 @@ public class DropPod : MonoBehaviour
     private float m_fuelUsePerSecond = 1.0f;
 
     public const float m_maxFuel = 100.0f;
+
+    [SerializeField]
+    private float m_invincibleTime = 1.0f;
 
     // E-man: Audio skit
     [SerializeField]
@@ -78,7 +78,6 @@ public class DropPod : MonoBehaviour
     private Vector2 m_bottomLeft;
 
     // E-man: Get ThrusterFlame object on awake
-    private GameObject thrusterFlame;
 
     private AudioSource[] audioSources;
 
@@ -97,7 +96,8 @@ public class DropPod : MonoBehaviour
     private float ShieldFlickerFrequency;
 
     // E-man
-    private GameObject dieExplosion;
+    
+
     private bool setToDestroy = false;
 
     [SerializeField]
@@ -109,6 +109,18 @@ public class DropPod : MonoBehaviour
     private Vector3 StartPosition;
 
     private float fuelIncrease = 10.0f;
+
+    [SerializeField]
+    private GameObject thrusterFlame;
+
+    [SerializeField]
+    private GameObject thrusterSmoke;
+
+    [SerializeField]
+    private GameObject dieExplosion;
+
+    [SerializeField]
+    private GameObject shieldShatterParticle;
 
     private void Awake() 
 	{
@@ -126,29 +138,12 @@ public class DropPod : MonoBehaviour
         grader = GameObject.Find("Grading");
         grade = grader.GetComponent<Grade>();
 
-        // E-man - Begin
-        thrusterFlame = GameObject.Find("ThrusterFlame");
+        // Make sure that these are set to false
+        thrusterFlame.SetActive(false);
+        thrusterSmoke.SetActive(false);
+        dieExplosion.SetActive(false);
+        shieldShatterParticle.SetActive(false);
 
-        if (thrusterFlame)
-        {
-            thrusterFlame.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
-        }
-
-        // Now find the explosion element
-        dieExplosion = GameObject.Find("Explosion");
-
-        if (dieExplosion)
-        {
-            dieExplosion.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("DopPod::Awake(), Hey buddy! Can't find your explosion guy!");
-        }
         // E-man - End
 
         // Set up raycast collision check
@@ -360,10 +355,15 @@ public class DropPod : MonoBehaviour
                 audioHit.Play();
             }
 
+            grade.GotHit();
+
             float flickerTime = 0;
-            RemoveShield();
+
+            // Deactivate the shield mesh
+            m_shieldObj.SetActive(false);
+
             shieldShatterParticle.SetActive(true);
-            while (flickerTime < 2.0f)
+            while (flickerTime < m_invincibleTime)
             { 
                 meshRenderer.material.SetColor
                     ("_Color", new Color(0.74f, 0.74f, 0.74f, 0.1f));
@@ -374,7 +374,9 @@ public class DropPod : MonoBehaviour
                 yield return new WaitForSeconds(ShieldFlickerFrequency);
                 flickerTime += 2 * ShieldFlickerFrequency;
             }
-            grade.GotHit();
+
+            // Set shield to false so we can get damaged
+            m_shield = false;
         }
         else
         {
@@ -401,23 +403,7 @@ public class DropPod : MonoBehaviour
 
     private void LevelComplete()
     {
-        Debug.Log("Landed!");
-
-        // TODO: Send level clear event
         GameManager.Instance.ChangeState(gameState.WIN);
-    }
-
-    private void RemoveShield()
-    {
-        // Have no shield. Do nothing
-        if (!m_shield)
-        {
-            return;
-        }
-
-        m_shield = false;
-
-        m_shieldObj.SetActive(false);
     }
 
     private void AddShield()
@@ -455,7 +441,7 @@ public class DropPod : MonoBehaviour
             float used = m_fuelUsePerSecond * Time.deltaTime;
             m_fuel -= used;
             grade.FuelUsage(used);
-
+            
             // Enable flame
             thrusterFlame.SetActive(true);
 
@@ -471,10 +457,17 @@ public class DropPod : MonoBehaviour
                 audioThrustStart.Play();
             }
         }
+        else if(buttonPressed && m_fuel <= 0.0f) {
+            // Enable flame
+            thrusterSmoke.SetActive(true);
+            // NOTE: HACK fix this shit
+            thrusterFlame.SetActive(false);
+        }   
         else
         {
             // Disable flame
             thrusterFlame.SetActive(false);
+            thrusterSmoke.SetActive(false);
 
             // Reset mesh shake
             Vector3 meshPos = m_meshTransform.position;
@@ -489,7 +482,7 @@ public class DropPod : MonoBehaviour
                 audioFireShoot.Stop();
                 audioThrustStart.Stop();
             }
-        }       
+        }     
     }
 
     public float GetMaxLandingVelocity()

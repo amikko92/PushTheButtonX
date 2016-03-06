@@ -85,7 +85,6 @@ public class CameraMovement : MonoBehaviour
                 Vector3 local = transform.position;        
                 local.y = curve.Evaluate(Time.time);
                 transform.position = local;
-                print("entered");
             }
             else if (pod && play)
             {
