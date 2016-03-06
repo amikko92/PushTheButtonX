@@ -20,6 +20,9 @@ public class DropPod : MonoBehaviour
 
     public const float m_maxFuel = 100.0f;
 
+    [SerializeField]
+    private float m_invincibleTime = 1.0f;
+
     // E-man: Audio skit
     [SerializeField]
     private AudioSource audioFlame;
@@ -351,10 +354,15 @@ public class DropPod : MonoBehaviour
                 audioHit.Play();
             }
 
+            grade.GotHit();
+
             float flickerTime = 0;
-            RemoveShield();
+
+            // Deactivate the shield mesh
+            m_shieldObj.SetActive(false);
+
             shieldShatterParticle.SetActive(true);
-            while (flickerTime < 2.0f)
+            while (flickerTime < m_invincibleTime)
             { 
                 meshRenderer.material.SetColor
                     ("_Color", new Color(0.74f, 0.74f, 0.74f, 0.1f));
@@ -365,7 +373,9 @@ public class DropPod : MonoBehaviour
                 yield return new WaitForSeconds(ShieldFlickerFrequency);
                 flickerTime += 2 * ShieldFlickerFrequency;
             }
-            grade.GotHit();
+
+            // Set shield to false so we can get damaged
+            m_shield = false;
         }
         else
         {
@@ -393,19 +403,6 @@ public class DropPod : MonoBehaviour
     private void LevelComplete()
     {
         GameManager.Instance.ChangeState(gameState.WIN);
-    }
-
-    private void RemoveShield()
-    {
-        // Have no shield. Do nothing
-        if (!m_shield)
-        {
-            return;
-        }
-
-        m_shield = false;
-
-        m_shieldObj.SetActive(false);
     }
 
     private void AddShield()
