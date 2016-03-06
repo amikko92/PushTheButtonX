@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
-using UnityEditorInternal;
+//using UnityEditor;
+//using UnityEditorInternal;
 using System.Reflection;
 using CurveExtended;
 
@@ -12,7 +12,7 @@ public class CameraMovement : MonoBehaviour
     private DropPod script;
     private float smoothSpeed = 1000.0f;
     public bool startOfGame;
-    private Vector3 startPos;
+    private Vector3 podPos;
     private bool explosion;
     private float dest;
     private float min;
@@ -29,7 +29,7 @@ public class CameraMovement : MonoBehaviour
     public float upOffset = 4.0f;
     public float stillOffset = 4.0f;
     public float fastOffset = -2.0f;
-    public float scartScrollDistancePS = 10.0f;
+    public float maxVelocity = 1.0f;
     public float fast = 12.0f;
     public float mid = 6.0f;
     public float slow = 4.0f;
@@ -38,38 +38,44 @@ public class CameraMovement : MonoBehaviour
     private float location;
     private int index;
 
-    
+    private Vector3 startPos;
+    private float timeStep;
+    private float timer;
+
     void Awake()
     {
         pod = GameObject.FindGameObjectWithTag("Player");
         script = pod.GetComponent<DropPod>();
-        startPos = pod.transform.position;
+        podPos = pod.transform.position;
         explosion = false;
         play = false;
         min = -0.21f;
         max = 0.21f;
         offset = midSpeedOffset;
         location = 0.7f;
-        curve = new AnimationCurve();
+        //curve = new AnimationCurve();
         Vector3 temp = transform.position;
         temp.y = 0.7f;
         transform.position = temp;
         if (!startOfGame)
         {
-            temp.y = startPos.y;
+            temp.y = podPos.y;
             transform.position = temp;
         }
         else
         {
-            for (index = 0; location < startPos.y; index++)
+            /*for (index = 0; location < startPos.y; index++)
             {
                 curve.AddKey(KeyframeUtil.GetNew(Time.time + index, location, TangentMode.Linear));
                 location += scartScrollDistancePS;
             }
             curve.AddKey(KeyframeUtil.GetNew(Time.time + index, startPos.y, TangentMode.Linear));
-            curve.UpdateAllLinearTangents();
+            curve.UpdateAllLinearTangents();*/
         }
-        
+
+        startPos = transform.position;
+        timeStep = 1.0f / ((podPos.y - startPos.y) / maxVelocity);
+        timer = 0.0f;
     }
     void FixedUpdate()
     { 
@@ -82,8 +88,12 @@ public class CameraMovement : MonoBehaviour
         {
             if (startOfGame)
             {
-                Vector3 local = transform.position;        
-                local.y = curve.Evaluate(Time.time);
+                Vector3 local = transform.position;
+
+                timer += Time.deltaTime;
+                float delta = curve.Evaluate(timer * timeStep);
+                local.y = delta * podPos.y;
+                
                 transform.position = local;
             }
             else if (pod && play)
@@ -151,7 +161,7 @@ public class CameraMovement : MonoBehaviour
         {
             os = Mathf.Lerp(offset, initOffset, offsetChangeSpeed * Time.deltaTime);
         }
-        if (transform.position.y >= (startPos.y))
+        if (transform.position.y >= (podPos.y))
         {
             os = Mathf.Lerp(offset, fastOffset, offsetChangeSpeed * Time.deltaTime);
         }
@@ -159,7 +169,7 @@ public class CameraMovement : MonoBehaviour
     }
     public bool AtTop()
     {
-        if (transform.position.y >= (startPos.y - 0.5f))
+        if (transform.position.y >= (podPos.y - 0.5f))
         {
             return true;
         }
