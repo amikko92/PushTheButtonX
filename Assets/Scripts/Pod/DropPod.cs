@@ -392,9 +392,6 @@ public class DropPod : MonoBehaviour
 
     private void LevelComplete()
     {
-        Debug.Log("Landed!");
-
-        // TODO: Send level clear event
         GameManager.Instance.ChangeState(gameState.WIN);
     }
 

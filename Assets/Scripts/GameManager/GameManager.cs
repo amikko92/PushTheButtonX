@@ -17,25 +17,10 @@ public class GameManager : MonoBehaviour {
     {
         get
         {
-            //_instance = GameObject.FindObjectOfType(typeof(GameManager)) as GameManager;
-
             if (_instance == null)
             {
                 GameObject singleton = new GameObject();
                 _instance = singleton.AddComponent<GameManager>();
-                singleton.name = "(singleton) " + typeof(GameManager).ToString();
-
-                //Destroy it on load. Causes memory leaks otherwise since the instance is nullified
-                //DontDestroyOnLoad(singleton);
-
-                Debug.Log("[Singleton] An instandce of "
-                    + typeof(GameManager) + " is needed in the scene, so '"
-                    + singleton + "'was created with DontDestroyOnLoad.");
-
-            }
-            else { 
-                Debug.Log("[Singleton] Using instance already created: " +
-                _instance.gameObject.name);
             }
                     
             return _instance;
@@ -56,14 +41,12 @@ public class GameManager : MonoBehaviour {
     {
         foreach (var listener in _listeners)
         {
-            Debug.Log("Changing object state");
             listener.ChangeState(_currentState);
         }
     }
 
     public void ChangeState(gameState state)
     {
-        Debug.Log("Game state change");
         _currentState = state;
         Notify();
     }
