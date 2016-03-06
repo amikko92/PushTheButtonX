@@ -46,7 +46,7 @@ public class DropPod : MonoBehaviour
     private AudioSource audioFalling;
 
     [SerializeField]
-    private float rattlingThreshold = -15;
+    private float rattlingThreshold = -10;
 
     private AudioSource[] allAudioSources;
     private bool isPaused;
