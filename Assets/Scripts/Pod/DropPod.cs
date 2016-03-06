@@ -75,7 +75,7 @@ public class DropPod : MonoBehaviour
     private Vector2 m_bottomLeft;
 
     // E-man: Get ThrusterFlame object on awake
-    private GameObject thrusterFlame;
+    private GameObject thrusterFlame, thrusterSmoke;
 
     private AudioSource[] audioSources;
 
@@ -125,27 +125,14 @@ public class DropPod : MonoBehaviour
 
         // E-man - Begin
         thrusterFlame = GameObject.Find("ThrusterFlame");
-
-        if (thrusterFlame)
-        {
-            thrusterFlame.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong!");
-        }
-
+        thrusterSmoke = GameObject.Find("ThrusterSmoke");
         // Now find the explosion element
         dieExplosion = GameObject.Find("Explosion");
 
-        if (dieExplosion)
-        {
-            dieExplosion.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("DopPod::Awake(), Hey buddy! Can't find your explosion guy!");
-        }
+        checkGameObject(ref thrusterFlame);
+        checkGameObject(ref thrusterSmoke);
+        checkGameObject(ref dieExplosion);
+
         // E-man - End
 
         // Set up raycast collision check
@@ -440,7 +427,7 @@ public class DropPod : MonoBehaviour
             float used = m_fuelUsePerSecond * Time.deltaTime;
             m_fuel -= used;
             grade.FuelUsage(used);
-
+            
             // Enable flame
             thrusterFlame.SetActive(true);
 
@@ -456,10 +443,17 @@ public class DropPod : MonoBehaviour
                 audioThrustStart.Play();
             }
         }
+        else if(buttonPressed && m_fuel <= 0.0f) {
+            // Enable flame
+            thrusterSmoke.SetActive(true);
+            // NOTE: HACK fix this shit
+            thrusterFlame.SetActive(false);
+        }   
         else
         {
             // Disable flame
             thrusterFlame.SetActive(false);
+            thrusterSmoke.SetActive(false);
 
             // Reset mesh shake
             Vector3 meshPos = m_meshTransform.position;
@@ -474,7 +468,7 @@ public class DropPod : MonoBehaviour
                 audioFireShoot.Stop();
                 audioThrustStart.Stop();
             }
-        }       
+        }     
     }
 
     public float GetMaxLandingVelocity()
@@ -485,5 +479,17 @@ public class DropPod : MonoBehaviour
     public bool isThrusting()
     {
         return thrusterFlame.activeSelf;
+    }
+
+    private void checkGameObject(ref GameObject go)
+    {
+        if (go)
+        {
+            go.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong when initializing: " + go.name);
+        }
     }
 }
