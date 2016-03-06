@@ -7,9 +7,6 @@ public class DropPod : MonoBehaviour
     private Thruster m_thruster;
 
     [SerializeField]
-    private GameObject shieldShatterParticle;
-
-    [SerializeField]
     private float m_maxLandingVelocity = 1.0f;
 
     [SerializeField, Range(0.0f, m_maxFuel)]
@@ -75,7 +72,6 @@ public class DropPod : MonoBehaviour
     private Vector2 m_bottomLeft;
 
     // E-man: Get ThrusterFlame object on awake
-    private GameObject thrusterFlame, thrusterSmoke;
 
     private AudioSource[] audioSources;
 
@@ -94,7 +90,8 @@ public class DropPod : MonoBehaviour
     private float ShieldFlickerFrequency;
 
     // E-man
-    private GameObject dieExplosion;
+    
+
     private bool setToDestroy = false;
 
     [SerializeField]
@@ -106,6 +103,18 @@ public class DropPod : MonoBehaviour
     private Vector3 StartPosition;
 
     private float fuelIncrease = 10.0f;
+
+    [SerializeField]
+    private GameObject thrusterFlame;
+
+    [SerializeField]
+    private GameObject thrusterSmoke;
+
+    [SerializeField]
+    private GameObject dieExplosion;
+
+    [SerializeField]
+    private GameObject shieldShatterParticle;
 
     private void Awake() 
 	{
@@ -123,15 +132,11 @@ public class DropPod : MonoBehaviour
         grader = GameObject.Find("Grading");
         grade = grader.GetComponent<Grade>();
 
-        // E-man - Begin
-        thrusterFlame = GameObject.Find("ThrusterFlame");
-        thrusterSmoke = GameObject.Find("ThrusterSmoke");
-        // Now find the explosion element
-        dieExplosion = GameObject.Find("Explosion");
-
-        checkGameObject(ref thrusterFlame);
-        checkGameObject(ref thrusterSmoke);
-        checkGameObject(ref dieExplosion);
+        // Make sure that these are set to false
+        thrusterFlame.SetActive(false);
+        thrusterSmoke.SetActive(false);
+        dieExplosion.SetActive(false);
+        shieldShatterParticle.SetActive(false);
 
         // E-man - End
 
@@ -481,15 +486,4 @@ public class DropPod : MonoBehaviour
         return thrusterFlame.activeSelf;
     }
 
-    private void checkGameObject(ref GameObject go)
-    {
-        if (go)
-        {
-            go.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("DopPod::Awake(), Hey buddy! Something went wrong when initializing: " + go.name);
-        }
-    }
 }
