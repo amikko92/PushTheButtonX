@@ -46,6 +46,12 @@ public class DropPod : MonoBehaviour
     private AudioSource audioFalling;
 
     [SerializeField]
+    private AudioSource audioShieldUp;
+
+    [SerializeField]
+    private AudioSource audioFuelEmpty;
+
+    [SerializeField]
     private float rattlingThreshold = -10;
 
     private AudioSource[] allAudioSources;
@@ -420,8 +426,10 @@ public class DropPod : MonoBehaviour
             return;
 
         m_shield = true;
+        m_shieldObj.SetActive(true);
 
-        m_shieldObj.SetActive(true); 
+        // E-man 
+        audioShieldUp.Play();
     }
     
     public float GravityScale()
@@ -457,18 +465,24 @@ public class DropPod : MonoBehaviour
             meshPos.x = meshPos.x + (m_shakeAmp * Mathf.Sin(m_shakeFreq * Time.time)) * GravityScale();
             m_meshTransform.position = meshPos;            
 
-            if (!audioFlame.isPlaying && !audioFireShoot.isPlaying /*&& !audioThrustStart.isPlaying*/)
+            if (!audioFlame.isPlaying && !audioFireShoot.isPlaying)
             {
-                audioFlame.Play();
-                audioFireShoot.Play();
-                audioThrustStart.Play();
+                startThrusterAudio();
             }
         }
-        else if(buttonPressed && m_fuel <= 0.0f) {
+        else if(buttonPressed && m_fuel <= 0.0f)
+        {
             // Enable flame
             thrusterSmoke.SetActive(true);
             // NOTE: HACK fix this shit
-            thrusterFlame.SetActive(false);
+            thrusterFlame.SetActive(false);            
+
+            // Play engine stutter sound
+            if (!audioFuelEmpty.isPlaying)
+            {
+                stopThrusterAudio();
+                audioFuelEmpty.Play();
+            }
         }   
         else
         {
@@ -481,13 +495,14 @@ public class DropPod : MonoBehaviour
             meshPos.x = transform.position.x;
             m_meshTransform.position = meshPos;
 
-            if (audioFlame.isPlaying || audioFireShoot.isPlaying)
+            if (audioFlame.isPlaying || audioFireShoot.isPlaying || audioFuelEmpty.isPlaying)
             {
+                // Play end thruster sound
                 audioThrustEnd.time = 0.2f;
                 audioThrustEnd.Play();
-                audioFlame.Stop();
-                audioFireShoot.Stop();
-                audioThrustStart.Stop();
+
+                // Stop other sounds
+                stopThrusterAudio();
             }
         }     
     }
@@ -538,5 +553,21 @@ public class DropPod : MonoBehaviour
                 audioSource.UnPause();
             }
         }
+    }
+
+    private void startThrusterAudio()
+    {
+        audioFlame.Play();
+        audioFireShoot.Play();
+        audioThrustStart.Play();
+    }
+
+    private void stopThrusterAudio()
+    {
+        audioFlame.Stop();
+        audioFireShoot.Stop();
+        audioThrustStart.Stop();
+        audioFuelEmpty.Stop();
+        audioFuelEmpty.Stop();
     }
 }
