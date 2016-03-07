@@ -13,6 +13,7 @@ public class Grade : MonoBehaviour {
     private float end;
     private GameObject pod;
     private float startHeight;
+    public float levelPoints = 0;
 
     private void Awake()
     {
@@ -23,7 +24,7 @@ public class Grade : MonoBehaviour {
         timePrice = 2;
         pod = GameObject.FindGameObjectWithTag("Player");
         startHeight = pod.transform.position.y;
-        startNo = startHeight * 10;
+        startNo = (startHeight * 10) + levelPoints;
     }
     public void GotHit()
     {
