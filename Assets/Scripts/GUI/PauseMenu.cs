@@ -55,6 +55,7 @@ public class PauseMenu : MonoBehaviour {
     {
         Time.timeScale = 0;
         screen.SetActive(true);
+        paused = true;
         //gui.SetActive(false); // Mikko: there is no reason to hide it. It also causes bugs
     }
 
@@ -62,6 +63,7 @@ public class PauseMenu : MonoBehaviour {
     {
         Time.timeScale = 1;
         screen.SetActive(false);
+        paused = false;
         //gui.SetActive(true); // Mikko: there is no reason to hide it. It also causes bugs
     }
 

@@ -22,6 +22,8 @@ public class MainMenuScripts : MonoBehaviour {
         select.SetActive(false);
         credits.SetActive(false);
         GameManager.Instance.ChangeState(gameState.PLAY);
+
+       
     }
 	
     public void Quit()
