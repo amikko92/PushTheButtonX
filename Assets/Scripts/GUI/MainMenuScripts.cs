@@ -11,13 +11,16 @@ public class MainMenuScripts : MonoBehaviour {
 
     public GameObject main;
     public GameObject select;
+    public GameObject credits;
     void Awake ()
     {
         GameManager.Instance.ChangeState(gameState.START);
         main = GameObject.Find("Main Menu");
         select = GameObject.Find("Level Select");
+        credits = GameObject.Find("Credits");
         main.SetActive(true);
         select.SetActive(false);
+        credits.SetActive(false);
         GameManager.Instance.ChangeState(gameState.PLAY);
     }
 	
@@ -37,7 +40,12 @@ public class MainMenuScripts : MonoBehaviour {
     public void MainMenu()
     {
         select.SetActive(false);
+        credits.SetActive(false);
         main.SetActive(true);
     }
-
+    public void Credits()
+    {
+        main.SetActive(false);
+        credits.SetActive(true);
+    }
 }
