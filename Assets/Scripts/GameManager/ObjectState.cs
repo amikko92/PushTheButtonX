@@ -46,16 +46,21 @@ public abstract class ObjectState : MonoBehaviour
         {
             init();
         }
+
+#if UNITY_EDITOR
         else
         {
             Debug.LogError("Could not find delegate method for init of state: " + state);
         }
-        
+#endif       
         success = m_stateUpdates.TryGetValue(state, out m_currentUpdate);
+
+#if UNITY_EDITOR
         if(!success)
         {
             Debug.LogError("Could not find delegate method for state: " + state);
         }
+#endif
     }
 
     protected abstract void InitStartState();

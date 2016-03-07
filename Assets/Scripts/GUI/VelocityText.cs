@@ -7,15 +7,17 @@ public class VelocityText : MonoBehaviour {
 
     private Text txt;
     private DropPod pod;
+    private GUIHandler guih;
 
 	// Use this for initialization
 	void Start () {
         txt = GetComponent<Text>();
-        pod = transform.parent.root.GetComponent<GUIHandler>().pod;
+        guih = transform.root.GetComponent<GUIHandler>();
+        pod = guih.pod;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        txt.text = "Velocity\n" + Convert.ToString(Math.Abs(Math.Round(pod.Velocity(), 2))) + "\nm/s";
+        txt.text =  Convert.ToString(Mathf.Abs(Mathf.Round(pod.Velocity() * 18 / 5 * guih.multiplier  )) )  + "\nkm/h";
 	}
 }

@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum SpawnableType { Asteroid };
+public enum SpawnableType { Asteroid, Laser, Platform};
 
 public class SpawnPoint : MonoBehaviour {
+
+    [SerializeField]
+    private bool continuousSpawning;
 
     [SerializeField]
     private SpawnManager spawnManager;
@@ -37,7 +40,13 @@ public class SpawnPoint : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (triggered && Time.time - time > spawnDelay && nbrSpawned < nbrToSpawn)
+
+        if (continuousSpawning && Time.time - time > spawnDelay)
+        {
+            PointSpawn();
+        }
+
+        else if (triggered && Time.time - time > spawnDelay && nbrSpawned < nbrToSpawn)
         {
             PointSpawn();
             nbrSpawned++;

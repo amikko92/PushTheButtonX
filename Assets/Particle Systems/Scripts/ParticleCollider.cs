@@ -7,47 +7,38 @@ public class ParticleCollider : MonoBehaviour {
     public Material aliveMTRL, destroyMTRL;
 
     private ParticleSystem ps;
-    private Renderer r;
+    private Renderer renderer;
     private IEnumerator coroutine;
+
+    private Collider2D collider2D;
 
 	// Use this for initialization
 	void Awake () {
         ps = GetComponent<ParticleSystem>();
-        r = GetComponent<Renderer>();
-        r.material = aliveMTRL;
+        renderer = GetComponent<Renderer>();
+        renderer.material = aliveMTRL;
+        collider2D = GetComponent<Collider2D>();
     }
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
-
-    void OnTriggerEnter2D (Collider2D col)
+    
+    void OnTriggerStay2D (Collider2D col)
     {
-        coroutine = CheckVelocity(col);
-        StartCoroutine(coroutine);
-    }
-
-    void OnTriggerExit2D (Collider2D col)
-    {
-        StopCoroutine(coroutine);
-    }
-
-    IEnumerator CheckVelocity (Collider2D col)
-    {
-        while (true)
+        string objLayerName = LayerMask.LayerToName(col.gameObject.layer);
+        if (string.Equals(objLayerName, "Player"))
         {
-            var player = col.GetComponent<Rigidbody2D>();
-            if (player.velocity.y > 0)
+            var pod = col.GetComponent<DropPod>();
+            if (pod.isThrusting())
             {
-                r.material = destroyMTRL;
+                renderer.material = destroyMTRL;
                 Fade();
-                player.SendMessage("KillMe");
-                yield return false;
+                pod.SendMessage("EnemyHit");
+                collider2D.enabled = false;
             }
-            yield return null;
         }
-        
     }
 
     void Fade()

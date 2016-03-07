@@ -4,11 +4,19 @@ using System.Collections;
 public class HatchState : ObjectState
 {
     private DropHatch m_hatch;
+    private InputHandler m_inputHandler;
+
+    private CameraMovement m_cam;
 
     protected override void Awake()
     {
         base.Awake();
         m_hatch = GetComponent<DropHatch>();
+
+        GameObject go = GameObject.Find("Input Handler");
+        m_inputHandler = go.GetComponent<InputHandler>();
+
+        m_cam = Camera.main.GetComponent<CameraMovement>();
     }
     
     protected override void InitStartState()
@@ -17,15 +25,14 @@ public class HatchState : ObjectState
 
     protected override void StartState()
     {
-        // TODO: Has the camera reached the top
+        // Add this when at top works
+        if (!m_cam.AtTop()) return;
 
-        bool pressed = Input.GetKeyDown(KeyCode.Space);
-        if(pressed)
+        if (m_inputHandler.Pressed())
         {
             m_hatch.EjectPod();
             m_hatch.DestroyMotherShip();
-
-            // TODO: Tell game manager to start play state
+            GameManager.Instance.ChangeState(gameState.PLAY);
         }
     }
 
