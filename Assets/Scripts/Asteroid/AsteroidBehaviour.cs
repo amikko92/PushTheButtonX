@@ -48,6 +48,7 @@ public class AsteroidBehaviour : MonoBehaviour {
     {
         if (collider.CompareTag("RightBound") || collider.CompareTag("LeftBound"))
         {
+            Debug.Log(gameObject.name);
             gameObject.SetActive(false);
         }
     }

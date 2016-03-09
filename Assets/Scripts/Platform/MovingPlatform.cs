@@ -126,7 +126,11 @@ public class MovingPlatform : MonoBehaviour
     {
         if (collider.CompareTag("RightBound") || collider.CompareTag("LeftBound"))
         {
-            gameObject.SetActive(false);
+            Transform root = transform.root;
+            if(root != null)
+            {
+                root.gameObject.SetActive(false);
+            }
         }
     }
 }
